@@ -226,6 +226,12 @@ button{
   align-items:center;
   gap:7px;
   cursor:pointer;
+  /* Los botones vienen centrados de fabrica. Con una sola linea no se nota,
+     porque la caja del texto se ajusta al contenido y queda pegada a la
+     izquierda, pero en cuanto el nombre pasa a dos lineas la caja ocupa todo
+     el ancho y el texto se centra, descuadrado respecto a los de al lado.
+     Los botones que si van centrados (.sbtn) lo piden expresamente. */
+  text-align:left;
 }
 button:active{transform:scale(.98)}
 .abtn{background:var(--yellow);border-color:var(--dark);color:var(--dark)}

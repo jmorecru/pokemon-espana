@@ -208,6 +208,23 @@ pistas están alineadas paso a paso, todas las notas son válidas, y al apagar l
 queda ninguna voz sonando —hay que cortarlas a mano porque el planificador va medio
 segundo por delante del reloj de audio—.
 
+### Los botones de dos líneas ya no salen centrados
+
+En pantallas estrechas, un botón cuyo nombre no cabe en una línea aparecía centrado
+mientras los de al lado quedaban a la izquierda: se veía en Huelva con "Monumento a la Fe
+Descubridora" y en Santiago con "Monasterio de San Martín Pinario".
+
+La causa era que la regla base de `button` usa `display:flex` sin fijar `text-align`, así
+que heredaba el `center` que los navegadores dan a los botones de fábrica. Con una sola
+línea no se notaba, porque la caja del texto se ajusta al contenido y queda pegada a la
+izquierda; en cuanto el texto se parte en dos, la caja pasa a ocupar todo el ancho y el
+centrado sale a la luz. Arreglado con `text-align:left` en la regla base; los botones que
+sí van centrados (`.sbtn`) ya lo pedían expresamente.
+
+Medido en el navegador a un ancho en el que el texto se parte: antes las líneas de un
+mismo botón empezaban en x=116 y x=173, y las de otro en x=110 y x=212, mientras el botón
+de una sola línea empezaba en x=105. Ahora las tres empiezan en x=105.
+
 ### Los dos modos de juego
 
 Al entrar se elige entre **modo clásico** y **modo repaso**, y si es repaso se pide curso

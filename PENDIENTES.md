@@ -1,188 +1,226 @@
 # Temas pendientes
 
-Revisión del juego hecha el **7 de septiembre de 2026**, al traerlo de Netlify a GitHub.
-El código se ha subido **tal cual estaba**, sin tocar nada: aquí queda escrito todo lo
-que se encontró, ordenado por gravedad, para decidir qué arreglar y en qué orden.
+Última revisión: **7 de septiembre de 2026**.
 
-Referencias por línea sobre el `index.html` de ese primer commit.
-
----
-
-## 🔴 Crítico
-
-### La respuesta correcta es siempre el primer botón
-
-- [ ] **Barajar las opciones de cada pregunta.**
-
-  Las **330 preguntas** del `CITY_POOL` tienen `ans: 0` — comprobado una por una, sin
-  una sola excepción. Y `setupPlacesForGame()` copia las opciones y el índice correcto
-  tal cual (`index.html:1793-1794`), mientras que `openPlace()` las pinta en el orden
-  del array (`index.html:1693`). Resultado: **un niño que pulse siempre el primer botón
-  gana la partida entera sin leer ninguna pregunta.**
-
-  Esto vacía de sentido el juego, así que es lo primero que hay que tocar. El arreglo es
-  pequeño y va todo en un sitio: en `setupPlacesForGame()`, barajar `opts` y recalcular
-  `ans` con la nueva posición de la opción correcta. No hay que tocar los datos.
-
-  Se descartó barajar los datos a mano (mover el `ans` a un índice aleatorio en las 330
-  preguntas) porque entonces cada partida repetiría siempre la misma posición para la
-  misma pregunta, y con 3 opciones se aprende rápido.
+El juego se trajo de Netlify a GitHub sin tocar nada, se revisó, y después se arreglaron
+las tres cosas que lo dejaban a medias: el fallo de las respuestas, las imágenes que
+faltaban y la música. Aquí queda lo que sigue abierto, empezando por lo que se ha pedido
+para las próximas versiones.
 
 ---
 
-## 🟠 Falta casi todo el contenido visual y sonoro
+## 🎯 Lo siguiente: convertirlo en un Carmen Sandiego
 
-### 75 de las 77 imágenes no existen
+La idea es que el juego deje de ser "visita monumentos y contesta" y pase a ser una
+persecución contra el reloj, como en *¿Dónde está Carmen Sandiego?*. Son cuatro cambios
+que van juntos y que, entre ellos, arreglan también el agujero de diseño que tiene ahora
+el juego (ver más abajo, "el atajo de la ruta").
 
-- [ ] **Conseguir las imágenes de ciudades y monumentos.**
+- [ ] **Un tiempo límite para atrapar al legendario.** Una bolsa de tiempo al empezar la
+      partida (por ejemplo, días y horas como en Carmen Sandiego, que se entiende mejor
+      que un contador de minutos reales). Si se agota, el Pokémon escapa y se pierde.
 
-  El juego referencia **77 imágenes** (11 de ciudad + 66 de monumento) y en el
-  repositorio solo hay **2**: `images/madrid/madrid.jpg` y `images/madrid/retiro.jpg`.
-  Las carpetas de las otras 10 ciudades están creadas y vacías, con un `.gitkeep`, para
-  que se vea dónde va cada cosa.
+- [ ] **Cada investigación consume tiempo.** Entrar en un monumento y responder cuesta
+      un rato. Así hay que elegir: investigar los tres lugares de una ciudad para estar
+      seguro, o arriesgarse con una sola pista y salir corriendo.
 
-  No se nota como un error porque `buildSceneHtml()` pone un `onerror` que esconde la
-  imagen que falla (`index.html:1519`): la escena se queda con el degradado de fondo y
-  la etiqueta del sitio. Es decir, **el juego parece funcionar pero se juega casi a
-  ciegas**, sin ver ni la ciudad ni el monumento del que se pregunta.
+- [ ] **Viajar cuesta tiempo, y equivocarse cuesta el doble.** Ir a una ciudad que no
+      toca gasta el viaje de ida y además el de vuelta. Esto es lo que hace que las
+      pistas importen: adivinar a lo loco sale carísimo.
 
-  Los nombres de fichero que espera cada ciudad están en el `CITY_POOL`
-  (`index.html:447-1284`), en los campos `cityImg` e `img`. Ojo al buscarlas: tienen que
-  ser imágenes libres o de licencia compatible (Wikimedia Commons, Unsplash), no
-  cualquier cosa de una búsqueda de imágenes, porque el repositorio es público.
+- [ ] **Solo 3 destinos por ciudad, no las 13.** En cada ciudad se ofrece una lista corta
+      de a dónde se puede volar (en Carmen Sandiego eran 3). La ciudad correcta tiene que
+      estar siempre entre ellas, y las otras dos se sortean. Ahora mismo se muestran
+      *todas* las ciudades del mapa, que es lo que permite ir probando una por una.
 
-### No hay música
+      Con esto hay que decidir además qué pasa si el jugador quiere volver atrás: o se
+      incluye siempre la ciudad de origen entre las 3, o se acepta que la persecución es
+      solo hacia delante.
 
-- [ ] **Conseguir las tres pistas de audio, o quitar el botón.**
-
-  `AUDIO_TRACKS` (`index.html:441`) apunta a `audio/city.mp3`, `audio/battle.mp3` y
-  `audio/legend.mp3`, y ninguno existe. Al pulsar el botón de música, `audio.play()`
-  falla y el botón se queda en **"⚠️ Sin audio"** — que al menos avisa, pero deja un
-  botón inútil a la vista.
-
-  Decidir: o se buscan tres pistas libres (ciudad / combate / victoria) o se esconde el
-  botón mientras no haya audio. Igual que con las imágenes, tiene que ser música de
-  licencia libre; las bandas sonoras originales de Pokémon no se pueden subir a un
-  repositorio público.
+**Por qué esto arregla el atajo de la ruta.** Hoy `travelTo()` sube `state.routeIndex`
+solo por llegar a la ciudad correcta, sin exigir haber resuelto nada, y las ciudades
+equivocadas contestan con el cartel de "¡Sin señal de energía!", que funciona como
+chivato: probando las 13 se descubre la siguiente sin acertar una pregunta. En cuanto
+viajar cuesta tiempo y solo hay 3 destinos, esa estrategia deja de ser gratis y las
+pistas pasan a ser lo que de verdad hace avanzar. Al implementarlo, ojo con
+`isCorrectNext` en `renderScreen()` y `openPlace()`: es código muerto (cuando se
+comprueba, `routeIndex` ya se ha incrementado) y estorba para entender el flujo.
 
 ---
 
-## 🟡 Jugabilidad
+## 📚 El banco de preguntas: repaso del colegio
 
-### Se puede resolver la ruta sin contestar una sola pregunta
+Ahora las 390 preguntas son de geografía y monumentos. La idea es que el juego sirva
+además para repasar lo que estudian los niños.
 
-- [ ] **Exigir resolver la ciudad antes de poder avanzar.**
+- [ ] **Preguntas por curso y tema, no por monumento.** El temario lo irás pasando tú
+      (primero, tercero y quinto), y de ahí se sacan las preguntas de repaso.
 
-  `travelTo()` (`index.html:1607`) incrementa `state.routeIndex` por el simple hecho de
-  llegar a la ciudad correcta, sin comprobar si se ha investigado nada en la anterior.
-  Y las ciudades equivocadas responden con el cartel de **"¡Sin señal de energía!"**
-  (`index.html:1557`), que funciona como chivato: probando las 10 ciudades del mapa se
-  descubre cuál es la siguiente de la ruta sin acertar ninguna pregunta.
+- [ ] **Elegir curso y temas al empezar la partida.** Una pantalla de selección antes de
+      encender la Smart-Rotom, y las preguntas de esa partida salen solo de lo elegido.
 
-  Encadenando eso, se llega a la ciudad final habiendo respondido cero preguntas, y allí
-  **basta un acierto en cualquiera de los 3 monumentos** para ganar
-  (`isFinalRouteCity()`, `index.html:1373`).
+**Lo que hay que replantear al hacerlo.** Hoy cada pregunta vive *dentro* de su monumento
+en el `CITY_POOL`, y eso deja de valer: hará falta un banco aparte, indexado por curso y
+tema, y que el monumento solo aporte el escenario. Es exactamente el motivo por el que
+merece la pena separar los datos del `index.html` (ver más abajo). Hay que decidir
+también si las preguntas de monumentos se conservan como un "tema" más —geografía de
+España— para no perder las 390 que ya están escritas y comprobadas.
 
-  Las pistas, que son el corazón del juego, quedan de adorno. Hay dos formas de cerrarlo
-  y conviene elegir una a conciencia, porque cambian el tono del juego:
+---
 
-  1. **Bloquear el avance**: no dejar viajar hasta haber resuelto los 3 monumentos de la
-     ciudad actual. Es lo más directo, pero castiga a quien se atasca en una pregunta.
-  2. **Quitar el chivato**: que todas las ciudades no visitadas se vean igual, sin decir
-     si el legendario pasó por allí, y que la única fuente de información sea la pista.
-     Mantiene la libertad de moverse pero obliga a jugar.
+## 💡 Explicaciones al fallar
 
-### Fallar no cuesta nada
+El mecanismo **ya está hecho**: al fallar, el juego dice cuál era la respuesta correcta y,
+si la pregunta trae explicación, la muestra con una bombilla. Lo que falta es el texto.
 
-- [ ] **Decidir si un fallo tiene consecuencia.**
+- [ ] **Escribir la explicación de las 330 preguntas de las once ciudades originales.**
+      Las 60 de Cádiz y Huelva ya la tienen y sirven de ejemplo del tono: una frase, en
+      lenguaje de niño, que dé el dato y el porqué. El campo es `exp` dentro de cada
+      pregunta del `CITY_POOL`, y es opcional: sin él el juego solo dice cuál era la
+      correcta, que ya es bastante.
 
-  `checkAns()` (`index.html:1709`) ante un fallo solo muestra "¡Pensadlo de nuevo!" y
-  deja reintentar infinitas veces sobre la misma pregunta. Con 3 opciones, se acierta a
-  la segunda o la tercera siempre.
+- [ ] **Decidir si la explicación se muestra también al acertar.** Ahora solo sale al
+      fallar. Para un juego de repaso quizá interese reforzar también el acierto, pero
+      la pantalla de acierto ya lleva la pista de la siguiente ciudad y puede quedar
+      cargada.
 
-  Puede estar bien así siendo un juego para niños — no frustrar es un objetivo legítimo —
-  pero conviene que sea una decisión tomada y no un descuido. Alternativa suave: al
-  fallar, volver a la pantalla de la ciudad y sortear otra pregunta del mismo monumento
-  al reintentar (hay 5 por monumento, dan de sobra).
+---
 
-### Recargar la página pierde la partida
+## 🟡 Jugabilidad que sigue pendiente
 
-- [ ] **Guardar la partida en `localStorage`.**
+- [ ] **Fallar sigue sin costar nada.** Se puede reintentar la misma pregunta infinitas
+      veces, y ahora además el juego dice cuál era la correcta, así que el segundo intento
+      es seguro. Esto es deliberado —no frustrar al que se atasca, y que el fallo enseñe—
+      pero deja de tener sentido en cuanto haya tiempo límite: ahí el coste natural es
+      que reintentar consuma tiempo. Decidirlo junto con el punto de Carmen Sandiego.
 
-  Todo el estado vive en el objeto `state` en memoria (`index.html:1286`). Un toque en
-  recargar, un cierre de pestaña por accidente o que el móvil descarte la pestaña, y se
-  pierde la ruta, la Pokédex y todo lo resuelto.
+- [ ] **Recargar la página pierde la partida.** Todo el estado vive en el objeto `state`
+      en memoria. Un toque en recargar o que el móvil descarte la pestaña y se pierde la
+      ruta, la Pokédex y todo lo resuelto. Con partidas de 5 ciudades jugadas en el móvil,
+      esto va a pasar. Al guardarlo en `localStorage`, cuidado con `state.donePlaces`:
+      usa objetos `Set`, que **no sobreviven a `JSON.stringify`** — hay que pasarlos a
+      array al guardar y reconstruirlos al cargar.
 
-  Con un juego de 5 ciudades que dura un rato y que se juega en el móvil, esto va a
-  pasar. Hay un detalle a tener en cuenta al implementarlo: `state.donePlaces` usa
-  objetos `Set`, que **no sobreviven a `JSON.stringify`** — hay que convertirlos a array
-  al guardar y reconstruirlos al cargar.
+- [ ] **Los huecos "???" de la Pokédex no significan nada.** `updatePokedex()` rellena
+      hasta 6 huecos con los primeros Pokémon del pool que no se han visto, así que
+      parece que faltan 6 concretos por encontrar cuando en realidad son decorativos.
+      O se muestran tantos huecos como Pokémon queden de verdad en la ruta, o se quitan.
 
 ---
 
 ## 🔵 Limpieza y calidad
 
-- [ ] **Código muerto: `isCorrectNext` nunca es cierto.** En `renderScreen()`
-      (`index.html:1544`) y `openPlace()` (`index.html:1657`) se calcula si la ciudad
-      actual es la *siguiente* de la ruta, pero `travelTo()` ya incrementó `routeIndex`
-      al llegar, así que en ese momento `isCurrent` siempre es `true` y la rama de
-      `isCorrectNext` no se ejecuta jamás. Confunde al leer el código y hace pensar que
-      hay un caso contemplado que no existe. Quitarlo, y tenerlo en cuenta si se toca lo
-      del avance obligatorio, más arriba.
-
-- [ ] **Los sprites de PokeAPI no tienen plan B.** Los `<img class="poke-img">`
-      (`index.html:1631` y `index.html:1686`) se cargan de `raw.githubusercontent.com`
-      sin `onerror`, al contrario que las imágenes de escena. Sin red o con el
-      repositorio caído, queda un hueco roto justo donde está el Pokémon, que es lo más
+- [ ] **Los sprites de PokeAPI no tienen plan B.** Los `<img class="poke-img">` se cargan
+      de `raw.githubusercontent.com` sin `onerror`, al contrario que las imágenes de
+      escena. Sin red queda un hueco roto justo donde está el Pokémon, que es lo más
       llamativo de la pantalla. Poner al menos un emoji de recambio.
 
-- [ ] **El `viewport` impide el zoom.** `maximum-scale=1.0, user-scalable=no`
-      (`index.html:5`) bloquea ampliar con los dedos. Se suele poner para que el móvil
-      no haga zoom automático al tocar un campo de texto, pero **aquí no hay ni un campo
-      de texto**, así que no aporta nada y estorba a quien necesite agrandar la letra.
-      Quitar `maximum-scale` y `user-scalable`.
-
-- [ ] **Los huecos "???" de la Pokédex no significan nada.** `updatePokedex()`
-      (`index.html:1473`) rellena hasta 6 huecos con los primeros Pokémon del pool que
-      aún no se han visto. Da la impresión de que faltan 6 concretos por encontrar,
-      cuando en realidad son decorativos y no tienen relación con la partida en curso.
-      O se enseñan tantos huecos como Pokémon queden de verdad por descubrir en la ruta,
-      o se quitan.
+- [ ] **El `viewport` impide el zoom.** `maximum-scale=1.0, user-scalable=no` bloquea
+      ampliar con los dedos. Se suele poner para que el móvil no haga zoom al tocar un
+      campo de texto, pero aquí no hay ni un campo de texto: no aporta nada y estorba a
+      quien necesite agrandar la letra.
 
 - [ ] **Sin favicon.** La pestaña sale con el icono en blanco. Con una Poké Ball en SVG
-      o un `.ico` pequeño se arregla.
+      se arregla.
 
-- [ ] **No es instalable como PasaporteLector.** No hay `manifest.json` ni service
-      worker, así que no se puede "Añadir a pantalla de inicio" y abrir a pantalla
-      completa, ni jugar sin conexión. Siendo un juego para el móvil y sin backend,
-      encaja especialmente bien como PWA: se puede copiar el enfoque de
+- [ ] **No es instalable como PasaporteLector.** No hay `manifest.json` ni service worker,
+      así que no se puede "Añadir a pantalla de inicio" ni jugar sin conexión. Ahora que
+      la música se sintetiza y las imágenes son locales, el juego **no necesita red para
+      nada salvo los sprites**, así que como PWA funcionaría entero sin cobertura. Se
+      puede copiar el enfoque de
       [pasaporte-lector](https://github.com/jmorecru/pasaporte-lector).
 
-- [ ] **Un solo archivo de 1884 líneas.** De ellas, **921 son solo datos** del
-      `CITY_POOL` (`index.html:447-1284`), más 318 de CSS y el resto de lógica. Editar o
-      añadir preguntas obliga a navegar por un archivo enorme y hace los diffs de git
-      difíciles de leer. Separar los datos a un `data/ciudades.js` (o un `.json` cargado
-      con `fetch`) sería el cambio que más facilita seguir añadiendo contenido. No urge:
-      el juego funciona y el archivo único no da problemas al desplegar.
+- [ ] **Un solo archivo de más de 2000 líneas.** La mayor parte son los datos del
+      `CITY_POOL`. Editar o añadir preguntas obliga a navegar por un archivo enorme y hace
+      los diffs de git ilegibles. Separar los datos a un `data/ciudades.js` es el cambio
+      que más facilita seguir añadiendo contenido, y es **requisito práctico** para el
+      banco de preguntas por temario.
+
+- [ ] **Revisar las preguntas de Cádiz y Huelva en familia.** Las 60 se escribieron de una
+      vez y, aunque están comprobadas, conviene que las lea alguien que conozca las dos
+      ciudades: el primo Andrés y los abuelos son justo los expertos.
 
 ---
 
-## ✅ Comprobado y correcto (no hace falta volver a mirarlo)
+## ✅ Ya arreglado y verificado
 
-Para no repetir trabajo, esto se verificó en la revisión del 7/9/2026 y está bien:
+### La respuesta correcta ya no es siempre el primer botón
 
-- **Los datos del `CITY_POOL` están limpios**: 11 ciudades, 6 monumentos por ciudad,
-  5 preguntas por monumento (330), todas con 3 opciones, sin opciones repetidas dentro
-  de una pregunta, sin nombres de monumento duplicados dentro de una ciudad y sin ningún
-  `ans` fuera de rango. Ninguna ruta de imagen se repite.
-- **`generateRoute()` siempre devuelve 5 ciudades**, con Londres o sin él, y nunca
-  repite ciudad. Madrid siempre primero, la final siempre de la lista de 5 finales.
-- **No se repiten Pokémon** dentro de una partida: `assignRandomPokemonToPlaces()`
-  baraja un pool de 95 y solo necesita 15.
-- **Las pistas no se repiten** dentro de la misma ciudad mientras queden sin usar
-  (`getHintForCurrentCity()`), y hay 2 por cada ciudad de destino.
-- **El modo repaso no filtra la pregunta ni la respuesta**: solo enseña el Pokémon y la
-  pista ya conseguida.
-- **No hay riesgo de inyección** al construir el HTML con concatenación: todo el texto
-  que se pinta viene de constantes del propio archivo, no hay ninguna entrada de usuario
-  en todo el juego.
+Las 390 preguntas del `CITY_POOL` tienen `ans: 0`, y antes las opciones se pintaban en
+ese orden: **se ganaba la partida pulsando siempre el primer botón**.
+`setupPlacesForGame()` ahora baraja las opciones y recalcula el índice de la correcta
+buscando su texto en el array barajado.
+
+Se dejaron los datos con `ans: 0` a propósito: barajarlos a mano habría fijado para
+siempre la posición de cada pregunta, y con 3 opciones eso se aprende rápido. Barajar en
+tiempo de ejecución da una posición distinta en cada partida.
+
+Verificado en Edge sin ventana, jugando **300 partidas completas**: la respuesta correcta
+cae en la 1ª / 2ª / 3ª posición un 33,1% / 33,0% / 33,9% de las veces, con 3.900
+preguntas respondidas y cero excepciones.
+
+### Las 91 imágenes
+
+Antes se referenciaban 77 imágenes y solo existían 2. Ahora están las 91 (13 ciudades ×
+1 + 78 monumentos), todas de Wikimedia Commons y **todas con licencia libre**,
+redimensionadas a 1200×800 como máximo y recomprimidas: 16,7 MB en total, unos 180 KB de
+media. La atribución completa está en [CREDITOS.md](CREDITOS.md).
+
+Un par de cosas aprendidas por el camino, por si hay que añadir más ciudades:
+
+- La API de `pageimages` de Wikipedia devuelve para las ciudades **la bandera, el escudo
+  o el mapa de situación**, no una foto. Para el Bernabéu llegó a bajar un mapa de Madrid.
+  Lo que sí funciona es la propiedad **P18 de Wikidata**, que es la imagen representativa
+  curada del sujeto.
+- La búsqueda libre en Commons trae cosas muy raras: una maqueta de la catedral de Girona
+  de un parque en miniatura, los planos de la Casa Batlló, una foto en sepia de barcas
+  para el barrio de Triana. Las categorías de Commons (P373) son mejores, pero al final
+  las últimas doce hubo que **elegirlas a mano mirándolas**.
+- Se exige JPEG de al menos 1000 px y **orientación apaisada**: la escena del juego se
+  recorta a 2,8:1 con `object-fit: cover`, así que una foto vertical de una torre se queda
+  en una franja del centro y no se ve la torre.
+- `images/madrid/retiro.jpg`, que venía con el proyecto, se sustituyó por una de Commons:
+  no se sabía de dónde había salido ni con qué licencia, y el repositorio es público.
+
+### La música
+
+No había ningún mp3 y el botón solo servía para poner "⚠️ Sin audio". Ahora hay **tres
+melodías originales de estilo 8 bits** —ciudad, combate y victoria— sintetizadas en el
+navegador con la Web Audio API: melodía en onda cuadrada, bajo en triangular y percusión
+de ruido filtrado en el tema de combate.
+
+Se hizo así a propósito y no con ficheros: las bandas sonoras originales de Pokémon no se
+pueden redistribuir en un repositorio público, y esto además no pesa nada, funciona sin
+conexión y no hay que servir ningún archivo. La carpeta `audio/` se ha eliminado.
+
+Verificado: afinación exacta (A4 = 440,00 Hz y C5 = 523,25 Hz), las dos voces de las tres
+pistas están alineadas paso a paso, todas las notas son válidas, y al apagar la música no
+queda ninguna voz sonando —hay que cortarlas a mano porque el planificador va medio
+segundo por delante del reloj de audio—.
+
+### Cádiz y Huelva
+
+Añadidas con 6 monumentos y 5 preguntas cada uno (60 nuevas), sus dos pistas en `HINTS` y
+sus 14 imágenes. Cádiz es la ciudad del **primo Andrés** y Huelva la de **los abuelos**,
+igual que Londres es la de Eduardo Jr.: se les menciona en el texto de bienvenida de su
+ciudad, en la pantalla de inicio y en la de victoria si la ruta pasó por allí.
+
+De paso mejora la variedad de las partidas: antes las ciudades intermedias se sorteaban
+entre 4, así que salían casi siempre las mismas. Ahora se sortean entre 6. Medido en 300
+partidas, Cádiz aparece en 139 y Huelva en 136.
+
+### Otras comprobaciones que no hace falta repetir
+
+- **Los datos están limpios**: 13 ciudades, 6 monumentos por ciudad, 5 preguntas por
+  monumento (390), todas con 3 opciones, sin opciones repetidas dentro de una pregunta,
+  sin monumentos duplicados dentro de una ciudad, ningún `ans` fuera de rango y ninguna
+  ruta de imagen repetida. Las 91 imágenes referenciadas existen.
+- **Todas las ciudades tienen pista en `HINTS`** menos Madrid, que no la necesita porque
+  es siempre el punto de partida.
+- **`generateRoute()` siempre devuelve 5 ciudades** distintas, con Londres o sin él.
+- **No se repiten Pokémon** en una partida: se baraja un pool de 95 y solo se necesitan 15.
+- **El modo repaso no filtra la pregunta ni la respuesta**: solo enseña el Pokémon que
+  apareció y la pista que se consiguió.
+- **Al fallar no se revela la pista** de la siguiente ciudad, solo la respuesta correcta.
+- **No hay riesgo de inyección** al construir el HTML por concatenación: todo el texto que
+  se pinta viene de constantes del propio archivo y no hay ninguna entrada de usuario.

@@ -314,6 +314,38 @@ button:active{transform:scale(.98)}
   overflow:hidden;
   text-overflow:ellipsis;
 }
+#reloj{
+  background:#0d1b46;
+  color:#fff;
+  padding:7px 12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  font-size:.78rem;
+  font-weight:900;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.reloj-resto{
+  background:rgba(255,255,255,.13);
+  border-radius:10px;
+  padding:3px 9px;
+  white-space:nowrap;
+}
+.reloj-resto.apurado{
+  background:var(--red);
+  color:#fff;
+}
+.coste{
+  margin-left:auto;
+  background:rgba(10,40,95,.12);
+  border-radius:8px;
+  padding:2px 7px;
+  font-size:.72rem;
+  font-weight:900;
+  white-space:nowrap;
+  flex-shrink:0;
+}
 .submenu-nota{
   font-size:.75rem;
   color:#64748b;
@@ -368,6 +400,8 @@ button:active{transform:scale(.98)}
     <span id="modo-badge" class="modo-badge hidden"></span>
     <button class="ctrl-btn" id="musicBtn">🔇 Música OFF</button>
   </div>
+
+  <div id="reloj" class="hidden"></div>
 
   <div id="rp"></div>
   <div id="screen"></div>
@@ -1707,6 +1741,82 @@ const CITY_POOL = {
   }
 };
 
+// ---------------------------------------------------------------------------
+// El reloj, al estilo Carmen Sandiego: se dispone de la semana entera, de lunes
+// a domingo, parando a dormir. Se esta despierto de 08:00 a 22:00 —catorce
+// horas utiles al dia— y el domingo la busqueda se acaba a las 20:00. Salen
+// 96 horas en total.
+//
+// Con esos numeros, una partida perfecta (cuatro viajes y una investigacion por
+// ciudad) cuesta 47 h y sobran unas 49. Da de sobra para investigar de mas, para
+// fallar alguna pregunta y para equivocarse de ciudad un par de veces, pero no
+// para ir probando ciudades a lo tonto: cada error cuesta la ida y la vuelta.
+
+const TIEMPO = {
+  investigar: 3,
+  viaje: 8,
+  viajeLondres: 12,
+  amanecer: 8,
+  anochecer: 22,
+  finDelDomingo: 20
+};
+
+const DIAS = ["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"];
+
+function horasUtilesDe(indiceDia) {
+  return indiceDia < 6
+    ? TIEMPO.anochecer - TIEMPO.amanecer
+    : TIEMPO.finDelDomingo - TIEMPO.amanecer;
+}
+
+const TIEMPO_TOTAL = DIAS.reduce(function(acc, _, i){ return acc + horasUtilesDe(i); }, 0);
+
+function relojDesdeHoras(gastadas) {
+  let resto = gastadas;
+  for (let d = 0; d < DIAS.length; d++) {
+    const cupo = horasUtilesDe(d);
+    if (resto < cupo) {
+      const h = TIEMPO.amanecer + resto;
+      return { dia: DIAS[d], hora: (h < 10 ? "0" : "") + h + ":00" };
+    }
+    resto -= cupo;
+  }
+  return { dia: "Domingo", hora: TIEMPO.finDelDomingo + ":00" };
+}
+
+function horasRestantes() {
+  return Math.max(0, TIEMPO_TOTAL - state.horasGastadas);
+}
+
+function costeViaje(desde, hasta) {
+  return (desde === "Londres" || hasta === "Londres") ? TIEMPO.viajeLondres : TIEMPO.viaje;
+}
+
+function pintarReloj() {
+  const barra = document.getElementById("reloj");
+  if (state.gameState === "start") {
+    barra.classList.add("hidden");
+    return;
+  }
+  barra.classList.remove("hidden");
+  const r = relojDesdeHoras(state.horasGastadas);
+  const quedan = horasRestantes();
+  barra.innerHTML =
+    '<span>🕗 ' + r.dia + ', ' + r.hora + '</span>' +
+    '<span class="reloj-resto' + (quedan <= 16 ? ' apurado' : '') + '">Quedan ' + quedan + ' h</span>';
+}
+
+// Devuelve true si con este gasto se acaba el tiempo.
+function gastarTiempo(horas) {
+  state.horasGastadas += horas;
+  pintarReloj();
+  if (state.horasGastadas >= TIEMPO_TOTAL) {
+    state.gameState = "perdido";
+    return true;
+  }
+  return false;
+}
+
 const state = {
   currentCity: "Madrid",
   discovered: [],
@@ -1717,8 +1827,12 @@ const state = {
   legendario: null,
   gameState: "start",
   placePokemon: {},
-  reviewData: {},
   usedHintsByCity: {},
+  horasGastadas: 0,
+  destinos: [],
+  pistasCiudad: {},
+  volverA: null,
+  costeVuelta: 0,
   musicEnabled: false,
   modo: "clasico",
   curso: null,
@@ -1789,8 +1903,20 @@ function getAssignedPokemon(cityKey, placeIndex) {
   return state.placePokemon[placeKey(cityKey, placeIndex)];
 }
 
-function saveReviewData(cityKey, placeIndex, pokemonName, clueText) {
-  state.reviewData[placeKey(cityKey, placeIndex)] = { pokemonName, clueText };
+// Tres destinos y solo tres, como en Carmen Sandiego: el bueno y dos senuelos.
+// No se cuelan las ciudades por las que ya se ha pasado, porque encontrarse un
+// "sin senal" en una de ellas seria confuso.
+function calcularDestinos() {
+  const correcta = getNextRouteCity();
+  if (!correcta) {
+    state.destinos = [];
+    return;
+  }
+  const yaVistas = state.secretRoute.slice(0, state.routeIndex + 1);
+  const senuelos = shuffle(Object.keys(CITY_POOL).filter(function(c){
+    return c !== correcta && yaVistas.indexOf(c) === -1;
+  })).slice(0, 2);
+  state.destinos = shuffle([correcta].concat(senuelos));
 }
 
 function getNextRouteCity() {
@@ -1964,68 +2090,64 @@ function renderScreen() {
   activePlace = null;
   activePI = null;
   playTrack("city", true);
+  pintarReloj();
 
   document.getElementById("cb").textContent = city.country + " " + city.label;
 
-  const routePos = state.secretRoute.indexOf(state.currentCity);
-  const currentRouteCity = state.secretRoute[state.routeIndex];
-  const nextRouteCity = getNextRouteCity();
-
-  const isCurrent = state.currentCity === currentRouteCity;
-  const isPast = routePos > -1 && routePos < state.routeIndex;
-  const isCorrectNext = state.currentCity === nextRouteCity;
-  const showNoSignal = !isCurrent && !isPast && !isCorrectNext;
+  // La persecucion va solo hacia delante: o estas en la ciudad donde el rastro
+  // esta caliente, o te has equivocado y solo cabe volver.
+  const enLaPista = state.currentCity === state.secretRoute[state.routeIndex];
 
   let html = '';
   const citySceneLabel = city.label.replace(/\(.*\)/,'').trim();
-  const cityImage = getCityImage(state.currentCity);
-  html += buildSceneHtml(citySceneLabel, cityImage, '');
-
+  html += buildSceneHtml(citySceneLabel, getCityImage(state.currentCity), '');
   html += '<div class="stext">' + city.welcome + '</div>';
 
-  if (showNoSignal) {
+  if (!enLaPista) {
     html += '<div class="wbox">';
     html += '<div style="font-size:1.3rem">🔍</div>';
     html += '<div style="font-weight:900;color:var(--red);font-size:.95rem;margin:5px 0">¡Sin señal de energía!</div>';
-    html += '<div style="font-size:.88rem">La Smart-Rotom está en silencio. El Pokémon legendario no ha pasado por aquí en este momento de la ruta. ¡Hay que seguir buscando!</div>';
+    html += '<div style="font-size:.88rem">La Smart-Rotom está en silencio. El legendario no ha pasado por aquí. Podéis dar una vuelta si queréis, pero el rastro bueno se enfría mientras tanto.</div>';
     html += '</div>';
-  } else if (isPast) {
-    html += '<div class="hbox">✅ Ya completasteis la investigación aquí. En el modo repaso podréis volver a ver solo la pista conseguida en cada lugar.</div>';
     html += '<div class="opts">';
     state.activePlaces[state.currentCity].forEach(function(pl, i){
-      html += '<button class="abtn" data-review="' + i + '">✅ ' + pl.name + '</button>';
+      html += '<button class="abtn" data-place="' + i + '">🔍 Investigar: ' + pl.name + '<span class="coste">' + TIEMPO.investigar + ' h</span></button>';
     });
     html += '</div>';
+    html += '<span class="slbl">🛬 Aquí no hay nada que hacer:</span>';
+    html += '<button class="sbtn" id="volverBtn">⬅️ Volver a ' + state.volverA + ' (' + state.costeVuelta + ' h)</button>';
   } else {
+    const pistas = state.pistasCiudad[state.currentCity] || [];
+    if (pistas.length) {
+      html += '<div class="hbox">📡 <strong>' + (pistas.length === 1 ? "Pista conseguida aquí" : "Pistas conseguidas aquí") + ':</strong><br>' + pistas.join("<br><br>") + '</div>';
+    }
+
     html += '<div class="opts">';
     state.activePlaces[state.currentCity].forEach(function(pl, i){
       const done = state.donePlaces[state.currentCity] && state.donePlaces[state.currentCity].has(i);
-      html += '<button class="abtn" data-place="' + i + '">' + (done ? ('✅ ' + pl.name) : ('🔍 Investigar: ' + pl.name)) + '</button>';
+      if (done) {
+        html += '<button class="abtn" disabled style="opacity:.5">✅ ' + pl.name + '</button>';
+      } else {
+        html += '<button class="abtn" data-place="' + i + '">🔍 Investigar: ' + pl.name + '<span class="coste">' + TIEMPO.investigar + ' h</span></button>';
+      }
     });
     html += '</div>';
-  }
 
-  html += '<span class="slbl">🛫 Viajar a otra ciudad de la red:</span><div class="tgrid">';
-  Object.keys(CITY_POOL).forEach(function(ck){
-    if (ck === state.currentCity) return;
-    const c = CITY_POOL[ck];
-    const visited = state.secretRoute.indexOf(ck) < state.routeIndex && state.secretRoute.indexOf(ck) !== -1;
-    const flagPart = c.emoji;
-    html += '<button class="' + (ck === "Londres" ? 'lbtn' : 'tbtn') + '" data-city="' + ck + '">' + flagPart + ' ' + ck + (visited ? ' ✅' : '') + '</button>';
-  });
-  html += '</div>';
+    if (!isFinalRouteCity(state.currentCity)) {
+      html += '<span class="slbl">🛫 El rastro sigue. ¿Hacia dónde vamos?</span><div class="opts">';
+      state.destinos.forEach(function(ck){
+        const clase = (ck === "Londres") ? "lbtn" : "tbtn";
+        html += '<button class="' + clase + '" data-city="' + ck + '">' + CITY_POOL[ck].emoji + ' ' + ck + '<span class="coste">' + costeViaje(state.currentCity, ck) + ' h</span></button>';
+      });
+      html += '</div>';
+    }
+  }
 
   screen.innerHTML = html;
 
   screen.querySelectorAll("[data-place]").forEach(function(btn){
     btn.addEventListener("click", function(){
-      openPlace(Number(btn.getAttribute("data-place")), false);
-    });
-  });
-
-  screen.querySelectorAll("[data-review]").forEach(function(btn){
-    btn.addEventListener("click", function(){
-      openPlace(Number(btn.getAttribute("data-review")), true);
+      openPlace(Number(btn.getAttribute("data-place")));
     });
   });
 
@@ -2034,67 +2156,77 @@ function renderScreen() {
       travelTo(btn.getAttribute("data-city"));
     });
   });
+
+  const volver = document.getElementById("volverBtn");
+  if (volver) volver.addEventListener("click", volverAtras);
 }
 
 function travelTo(city) {
+  const origen = state.currentCity;
+  const coste = costeViaje(origen, city);
+  if (gastarTiempo(coste)) { showGameOver(); return; }
+
+  const correcta = getNextRouteCity();
   state.currentCity = city;
-  const nextCity = getNextRouteCity();
-  if (city === nextCity) {
+
+  if (city === correcta) {
     state.routeIndex++;
+    state.volverA = null;
+    state.costeVuelta = 0;
+    calcularDestinos();
     updateRouteBar();
+  } else {
+    // Ciudad equivocada: desde aqui no se sigue a ningun sitio, solo se vuelve,
+    // y la vuelta cuesta lo mismo que costo venir.
+    state.volverA = origen;
+    state.costeVuelta = coste;
+    // Los lugares de una ciudad fuera de ruta no se crean al empezar la
+    // partida, asi que se preparan ahora: solo hacen falta los nombres.
+    if (!state.activePlaces[city]) {
+      state.activePlaces[city] = pick3Places(city).map(function(p){ return { name: p.name }; });
+      state.donePlaces[city] = new Set();
+    }
   }
   renderScreen();
 }
 
-function renderReviewPlace(i) {
-  const pl = state.activePlaces[state.currentCity][i];
-  const assignedPokemon = getAssignedPokemon(state.currentCity, i);
-  const review = state.reviewData[placeKey(state.currentCity, i)];
-  const pokemonName = review && review.pokemonName ? review.pokemonName : assignedPokemon.name;
-  const clueText = review && review.clueText ? review.clueText : "No hay pista guardada todavía.";
-  const pokeUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/" + assignedPokemon.id + ".png";
-  const scr = document.getElementById("screen");
-
-  let html = '';
-  const placeImage = getPlaceImage(state.currentCity, pl.name);
-  html += buildSceneHtml(
-    pl.name,
-    placeImage,
-    '<img class="poke-img" src="' + pokeUrl + '" alt="' + pokemonName + '">' +
-    '<div class="poke-badge">⚡ ' + pokemonName + '</div>'
-  );
-  html += '<div class="stext">📘 <strong>Modo repaso:</strong> aquí os encontrasteis con <strong>' + pokemonName + '</strong>.</div>';
-  html += '<div class="hbox">🗺️ <strong>Pista conseguida:</strong><br>' + clueText + '</div>';
-  html += '<button class="tbtn" id="backBtn" style="margin-top:5px">⬅️ Volver</button>';
-
-  scr.innerHTML = html;
-  document.getElementById("backBtn").addEventListener("click", renderScreen);
+function volverAtras() {
+  if (gastarTiempo(state.costeVuelta)) { showGameOver(); return; }
+  state.currentCity = state.volverA;
+  state.volverA = null;
+  state.costeVuelta = 0;
+  renderScreen();
 }
 
-function openPlace(i, reviewMode) {
+function openPlace(i) {
   const places = state.activePlaces[state.currentCity];
-  if (!places) {
+  if (!places || !places[i]) {
     renderScreen();
     return;
   }
 
   const pl = places[i];
-  const alreadyDone = state.donePlaces[state.currentCity] && state.donePlaces[state.currentCity].has(i);
-  const routePos = state.secretRoute.indexOf(state.currentCity);
-  const currentRouteCity = state.secretRoute[state.routeIndex];
-  const nextRouteCity = getNextRouteCity();
-
-  const isPast = routePos > -1 && routePos < state.routeIndex;
-  const isCurrent = state.currentCity === currentRouteCity;
-  const isCorrectNext = state.currentCity === nextRouteCity;
-
-  if (reviewMode || isPast || alreadyDone) {
-    renderReviewPlace(i);
+  const yaResuelto = state.donePlaces[state.currentCity] && state.donePlaces[state.currentCity].has(i);
+  if (yaResuelto) {
+    renderScreen();
     return;
   }
 
-  if (!isCurrent && !isCorrectNext) {
-    renderScreen();
+  // Investigar cuesta lo mismo se encuentre algo o no.
+  if (gastarTiempo(TIEMPO.investigar)) { showGameOver(); return; }
+
+  const enLaPista = state.currentCity === state.secretRoute[state.routeIndex];
+  if (!enLaPista) {
+    // En una ciudad fuera de ruta no hay ni pregunta ni pista: solo se pierde
+    // el rato, que es justo el castigo por no hacer caso a la pista.
+    const scr = document.getElementById("screen");
+    let html = '';
+    html += buildSceneHtml(pl.name, getPlaceImage(state.currentCity, pl.name), '');
+    html += '<div class="stext">Recorréis <strong>' + pl.name + '</strong> de arriba abajo y la Smart-Rotom no hace ni un ruido. Aquí no hay ni rastro del legendario.</div>';
+    html += '<div class="hbox">⏳ Se os han ido ' + TIEMPO.investigar + ' horas y no habéis sacado nada en claro.</div>';
+    html += '<button class="tbtn" id="backBtn">⬅️ Volver</button>';
+    scr.innerHTML = html;
+    document.getElementById("backBtn").addEventListener("click", renderScreen);
     return;
   }
 
@@ -2144,14 +2276,6 @@ function checkAns(idx) {
   const mx = document.getElementById("mx");
   const finalBattle = isFinalRouteCity(state.currentCity);
 
-  if (state.donePlaces[state.currentCity] && state.donePlaces[state.currentCity].has(activePI)) {
-    mt.textContent = "YA COMPLETADO ✅";
-    mt.className = "mt ok";
-    mx.innerHTML = "Este lugar ya había sido resuelto. En el modo repaso podéis volver a consultar solo la pista conseguida.";
-    mo.classList.remove("hidden");
-    return;
-  }
-
   if (idx === activePlace.ans) {
     mt.textContent = "¡CORRECTO! 🎉";
     mt.className = "mt ok";
@@ -2169,18 +2293,24 @@ function checkAns(idx) {
       mx.innerHTML = "🌟 ¡El imponente <strong>" + state.legendario.name + "</strong> desciende ante vosotros!<br><br>Asombrado por vuestra impecable cultura y conocimiento geográfico por toda España, ¡decide unirse voluntariamente a vuestro equipo!";
       state.gameState = "win";
     } else {
-      const hint = "📡 <strong>Pista:</strong> " + getHintForCurrentCity();
-      saveReviewData(state.currentCity, activePI, pokeName, hint);
-      mx.innerHTML = hint;
+      // Se guarda el texto pelado: el rotulo "Pista" lo pone quien la muestra.
+      // Las pistas se quedan luego a la vista en la pantalla de la ciudad, que
+      // es lo que sustituye a poder volver a consultarlas mas tarde.
+      const pista = getHintForCurrentCity();
+      if (!state.pistasCiudad[state.currentCity]) state.pistasCiudad[state.currentCity] = [];
+      state.pistasCiudad[state.currentCity].push(pista);
+      mx.innerHTML = "📡 <strong>Pista:</strong> " + pista;
     }
   } else {
     mt.textContent = "¡FALLO! ❌";
     mt.className = "mt ko";
     // Fallar tiene que ensenar algo: se dice cual era la correcta y, cuando la
-    // pregunta trae explicacion, tambien el por que.
+    // pregunta trae explicacion, tambien el por que. El castigo no es una multa
+    // aparte: es que el monumento se queda sin resolver y volver a entrar
+    // cuesta otra investigacion entera.
     let fallo = "Esa no era. La respuesta correcta es <strong>" + activePlace.opts[activePlace.ans] + "</strong>.";
     if (activePlace.exp) fallo += "<br><br>💡 " + activePlace.exp;
-    fallo += "<br><br>Volved a intentarlo y marcad la correcta para seguir la pista.";
+    fallo += "<br><br>El Pokémon se ha escapado sin soltar la pista. Podéis volver a investigar este monumento, pero os costará otras <strong>" + TIEMPO.investigar + " horas</strong>.";
     mx.innerHTML = fallo;
   }
 
@@ -2191,9 +2321,35 @@ function closeModal() {
   document.getElementById("modal").classList.add("hidden");
   if (state.gameState === "win") {
     showWin();
+  } else if (state.gameState === "perdido") {
+    showGameOver();
   } else {
     renderScreen();
   }
+}
+
+function showGameOver() {
+  stopMusic();
+  document.getElementById("modal").classList.add("hidden");
+  pintarReloj();
+
+  const scr = document.getElementById("screen");
+  const ruta = state.secretRoute.map(function(c){
+    return CITY_POOL[c].emoji + " <strong>" + c + "</strong>";
+  }).join(" → ");
+
+  let html = '';
+  html += '<div class="stext" style="text-align:center;background:#fff5f5;border:3px solid var(--red);border-left:3px solid var(--red)">';
+  html += '<div style="font-size:.95rem;color:var(--red);margin-bottom:12px;line-height:1.6;font-weight:900">⏰ ¡SE ACABÓ LA SEMANA!</div>';
+  html += '<p>Ha llegado el domingo por la tarde y <strong>' + state.legendario.name + '</strong> ha vuelto a escapar. La Smart-Rotom se queda sin batería.</p>';
+  html += '<div style="background:#fff;border-radius:10px;padding:11px;margin:10px 0;font-size:.82rem;line-height:2.1">La ruta que estaba siguiendo era:<br>' + ruta + '</div>';
+  html += '<p style="font-size:.85rem">Con las pistas da tiempo de sobra: cada una dice a qué ciudad hay que ir. Lo que se come el reloj es viajar a la ciudad equivocada.</p>';
+  html += '</div>';
+  html += '<button class="sbtn" id="restartBtn">🔄 INTENTARLO OTRA VEZ</button>';
+
+  scr.innerHTML = html;
+  document.getElementById("cb").textContent = "⏰ Se acabó el tiempo";
+  document.getElementById("restartBtn").addEventListener("click", restartGame);
 }
 
 function showWin() {
@@ -2219,6 +2375,8 @@ function showWin() {
   html += '<div style="font-size:.95rem;color:var(--red);margin-bottom:12px;line-height:1.6;font-weight:900">🏆 ¡MAESTROS DE LA GEOGRAFÍA! 🏆</div>';
   html += '<p>¡Habéis descubierto la ruta secreta y capturado a <strong>' + state.legendario.name + '</strong>!</p>';
   html += '<div style="background:#fff;border-radius:10px;padding:11px;margin:10px 0;font-size:.82rem;line-height:2.1">La ruta aleatoria resuelta ha sido:<br>' + routeStr + '</div>';
+  const fin = relojDesdeHoras(Math.min(state.horasGastadas, TIEMPO_TOTAL - 1));
+  html += '<p style="font-size:.85rem">🕗 Le echasteis <strong>' + state.horasGastadas + ' horas</strong>: cazado el <strong>' + fin.dia.toLowerCase() + ' a las ' + fin.hora + '</strong>, con ' + horasRestantes() + ' h de margen.</p>';
   FAMILIA.forEach(function(f){
     if (state.secretRoute.indexOf(f.ciudad) !== -1) {
       html += '<p style="color:#1a237e;font-weight:900">' + f.texto + '</p>';
@@ -2294,16 +2452,21 @@ function startGame() {
   state.donePlaces = {};
   state.activePlaces = {};
   state.placePokemon = {};
-  state.reviewData = {};
   state.usedHintsByCity = {};
+  state.horasGastadas = 0;
+  state.pistasCiudad = {};
+  state.volverA = null;
+  state.costeVuelta = 0;
   state.gameState = "explore";
 
   setupPlacesForGame();
   assignRandomPokemonToPlaces();
+  calcularDestinos();
   state.legendario = LEGENDARIOS[Math.floor(Math.random() * LEGENDARIOS.length)];
   updatePokedex();
   updateRouteBar();
   actualizarBadgeModo();
+  pintarReloj();
   renderScreen();
 }
 
@@ -2315,14 +2478,19 @@ function restartGame() {
   state.activePlaces = {};
   state.donePlaces = {};
   state.placePokemon = {};
-  state.reviewData = {};
   state.usedHintsByCity = {};
+  state.horasGastadas = 0;
+  state.destinos = [];
+  state.pistasCiudad = {};
+  state.volverA = null;
+  state.costeVuelta = 0;
   state.gameState = "start";
   state.legendario = null;
   activePlace = null;
   activePI = null;
 
   stopMusic();
+  pintarReloj();
 
   document.getElementById("rp").style.display = "none";
   document.getElementById("cb").textContent = "—";
@@ -2347,6 +2515,7 @@ function renderMenuInicio() {
   html += '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:8px">';
   html += '<h2 style="font-size:.95rem;color:var(--blue);margin-bottom:12px;line-height:1.6">🔴 ¡AVENTURA GEOGRÁFICA v7.3!</h2>';
   html += '<div class="tcard">🧳 <strong>Un Pokémon Clandestino huye de nuevo</strong>. La Smart-Rotom ha detectado una ruta encriptada de <strong>5 ciudades</strong>. Tendréis que seguir pistas, visitar monumentos, responder preguntas y descubrir dónde se esconde el legendario antes de que vuelva a escapar.</div>';
+  html += '<div class="tcard">⏰ <strong>Tenéis una semana</strong>, de lunes a domingo, parando a dormir: ' + TIEMPO_TOTAL + ' horas para atraparlo. Investigar un monumento cuesta <strong>' + TIEMPO.investigar + ' h</strong> y cada viaje <strong>' + TIEMPO.viaje + ' h</strong>, más si hay que cruzar el mar. Equivocarse de ciudad se paga a la ida <em>y</em> a la vuelta, así que haced caso a las pistas.</div>';
   html += '<div class="tcard dark">👀 Atentos por el camino: <strong style="color:#ffcc00">hay familia repartida por el mapa</strong>, y no os vamos a decir dónde. Ya aparecerán.</div>';
   html += '<span class="slbl">¿A qué jugamos?</span>';
   html += '<button class="sbtn" id="btnClasico">🗺️ MODO CLÁSICO</button>';

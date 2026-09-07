@@ -22,6 +22,26 @@ Al entrar se elige a qué se juega:
 Los temas se cargan en la constante `BANCO_REPASO` del `index.html`, que lleva encima un
 comentario con el formato y un ejemplo. Mientras no haya ninguno, el modo repaso lo avisa.
 
+## Contra el reloj
+
+Como en *¿Dónde está Carmen Sandiego?*, hay **una semana** para atrapar al legendario: de
+lunes a domingo, parando a dormir por la noche. Son 96 horas útiles, y cada cosa cuesta:
+
+| Acción | Coste |
+| --- | --- |
+| Investigar un monumento | 3 h |
+| Viajar a otra ciudad | 8 h |
+| Cruzar el mar | 12 h |
+| Volver de una ciudad equivocada | lo mismo que costó ir |
+
+Desde cada ciudad solo se ofrecen **3 destinos**: el bueno y dos señuelos. Si se acierta,
+el rastro sigue; si no, allí no hay nada que hacer salvo volver, y se paga el viaje dos
+veces. Por eso las pistas importan: una partida bien llevada cuesta unas 47 horas y sobra
+margen para tres equivocaciones, pero ir probando ciudades a lo tonto no sale.
+
+Fallar una pregunta no cobra una multa aparte: el monumento se queda sin resolver y no
+suelta la pista, así que hay que volver a investigarlo y pagar otras 3 horas.
+
 ## Qué hace
 
 - **Ruta aleatoria en cada partida**: Madrid siempre es el punto de partida, la ciudad
@@ -35,8 +55,8 @@ comentario con el formato y un ejemplo. Mientras no haya ninguno, el modo repaso
 - **Al fallar se aprende**: el juego dice cuál era la respuesta correcta y, cuando la
   pregunta lo necesita, explica por qué.
 - **Pokédex**: un Pokémon distinto en cada monumento, y el legendario en la ciudad final.
-- **Modo repaso**: al volver a una ciudad ya resuelta se puede consultar qué Pokémon
-  apareció en cada sitio y qué pista dio, sin volver a ver la pregunta.
+- **Las pistas se quedan a la vista** en la pantalla de la ciudad donde se consiguieron,
+  para no tener que apuntarlas.
 - **Barra de ruta** que se va destapando: las ciudades por descubrir se ven como `?`.
 - **Música 8 bits** de ciudad, de combate y de victoria, generada en el navegador.
 
@@ -73,9 +93,8 @@ Y abrir http://localhost:8000.
 ## Qué falta
 
 [PENDIENTES.md](PENDIENTES.md) tiene la lista, con el porqué de cada punto. Lo próximo es
-grande: convertirlo en un **Carmen Sandiego** (tiempo límite, cada investigación y cada
-viaje consumen tiempo, y solo 3 destinos posibles desde cada ciudad) y usar el banco de
-preguntas como **repaso del temario del colegio**, eligiendo curso y temas al empezar.
+**cargar el temario del colegio** en el banco del modo repaso, que es lo único que le falta
+para cumplir del todo su propósito.
 
 ## Sobre los derechos
 

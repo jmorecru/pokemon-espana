@@ -293,6 +293,28 @@ button:active{transform:scale(.98)}
 }
 .pslot.found{border-color:var(--red);background:#fff5f5;color:var(--red)}
 .hidden{display:none!important}
+.modo-badge{
+  margin-right:auto;
+  align-self:center;
+  max-width:62%;
+  background:rgba(255,222,0,.14);
+  border:1px solid rgba(255,222,0,.45);
+  color:var(--yellow);
+  border-radius:10px;
+  padding:6px 10px;
+  font-size:.7rem;
+  font-weight:900;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.submenu-nota{
+  font-size:.75rem;
+  color:#64748b;
+  font-weight:700;
+  line-height:1.45;
+  margin:5px 2px 4px;
+}
 #modal{
   position:fixed;
   top:0;left:0;width:100%;height:100%;
@@ -337,6 +359,7 @@ button:active{transform:scale(.98)}
   </div>
 
   <div id="top-actions">
+    <span id="modo-badge" class="modo-badge hidden"></span>
     <button class="ctrl-btn" id="musicBtn">🔇 Música OFF</button>
   </div>
 
@@ -435,14 +458,69 @@ const HINTS = {
     "Las ondas atraviesan el mar hacia el Reino Unido… tierra de neblina, reyes y un reloj gigante muy famoso."
   ],
   "Cádiz": [
-    "El rastro baja al sur, a una ciudad rodeada de mar por todos lados, con una catedral de cúpula amarilla... ¡la ciudad del primo Andrés!",
-    "Las señales van al suroeste atlántico, a la ciudad más antigua de Occidente, la de las torres para vigilar los barcos."
+    "El rastro baja al sur, a una ciudad rodeada de mar por todos lados, con una catedral de cúpula amarilla que brilla desde el agua.",
+    "Las señales van al suroeste atlántico, a la ciudad más antigua de Occidente, la de las torres para vigilar la llegada de los barcos."
   ],
   "Huelva": [
-    "El rastro va al suroeste, a la tierra de los abuelos: una ría con un largo muelle de hierro y los monasterios de Colón.",
+    "El rastro va al suroeste, a una ría con un largo muelle de hierro y los monasterios donde Colón preparó su viaje.",
     "Las señales apuntan al sur, allí donde dos ríos se juntan y de donde zarparon las tres carabelas hacia América."
   ]
 };
+
+// ---------------------------------------------------------------------------
+// Modo repaso: el mismo juego de siempre —mismas ciudades, misma ruta secreta,
+// mismas pistas— pero las preguntas salen del temario del colegio en vez de
+// los monumentos. El monumento pasa a ser solo el escenario.
+//
+// Para anadir un tema basta con pegarlo aqui dentro del curso que toque, con
+// el mismo formato que las preguntas del CITY_POOL: tres opciones, la correcta
+// siempre en primer lugar (el juego las baraja al empezar cada partida) y una
+// explicacion opcional que se muestra al fallar. Por ejemplo:
+//
+//   "5": {
+//     "El sistema solar": [
+//       { q:"¿Cuál es el planeta más cercano al Sol?",
+//         opts:["Mercurio","Venus","La Tierra"], ans:0,
+//         exp:"Mercurio es el primero de los ocho planetas y también el más pequeño." }
+//     ]
+//   }
+//
+// Un tema funciona con las preguntas que tenga: si son menos de las 15 que
+// pide una partida, se repiten barajadas.
+
+const CURSOS = [
+  { id:"1", nombre:"1º de Primaria" },
+  { id:"3", nombre:"3º de Primaria" },
+  { id:"5", nombre:"5º de Primaria" }
+];
+
+const BANCO_REPASO = {
+  "1": {},
+  "3": {},
+  "5": {}
+};
+
+function temasDelCurso(cursoId) {
+  const temas = BANCO_REPASO[cursoId] || {};
+  return Object.keys(temas).filter(function(t){
+    return temas[t] && temas[t].length > 0;
+  });
+}
+
+function hayAlgoQueRepasar() {
+  return CURSOS.some(function(c){ return temasDelCurso(c.id).length > 0; });
+}
+
+function nombreCurso(cursoId) {
+  const c = CURSOS.filter(function(x){ return x.id === cursoId; })[0];
+  return c ? c.nombre : cursoId;
+}
+
+function preguntasDelTema() {
+  const curso = BANCO_REPASO[state.curso];
+  if (!curso) return [];
+  return curso[state.tema] || [];
+}
 
 // ---------------------------------------------------------------------------
 // Musica chiptune generada en el propio navegador con la Web Audio API.
@@ -640,7 +718,7 @@ const CITY_POOL = {
     country:"🇪🇸",
     label:"Madrid (Donde vivimos)",
     cityImg:"images/madrid/madrid.jpg",
-    welcome:"¡Estamos en casa! Madrid está llena de vida y la Smart-Rotom detecta anomalías en sus lugares históricos.",
+    welcome:"¡Estamos en casa! Madrid está llena de vida y la Smart-Rotom detecta anomalías en sus lugares históricos. 👵👴 Y por aquí andan <strong>los abuelos Elena y Juanchu</strong>, que se han ofrecido a echar una mano en cuanto haga falta.",
     places:[
       {
         name:"Parque del Retiro",
@@ -790,9 +868,9 @@ const CITY_POOL = {
   "Sevilla": {
     emoji:"🌸",
     country:"🇪🇸",
-    label:"Sevilla (Donde vive la familia)",
+    label:"Sevilla (Donde viven los primos Sofía, Juan y Auxi)",
     cityImg:"images/sevilla/sevilla.jpg",
-    welcome:"🎉 ¡Sevilla! ¡Qué alegría llegar aquí y reencontrarse con la familia! La capital hispalense reluce, la brisa huele a azahar, el compás flamenco llena el aire y la Smart-Rotom vibra con más fuerza que nunca.",
+    welcome:"🎉 ¡Sevilla! ¡Qué alegría llegar aquí! Os esperan <strong>los primos Sofía, Juan y Auxi</strong>, que se saben la ciudad de memoria y no piensan perderse la búsqueda. La capital hispalense reluce, la brisa huele a azahar, el compás flamenco llena el aire y la Smart-Rotom vibra con más fuerza que nunca.",
     places:[
       {
         name:"La Giralda",
@@ -1549,9 +1627,9 @@ const CITY_POOL = {
   "Huelva": {
     emoji:"⛵",
     country:"🇪🇸",
-    label:"Huelva (Donde viven los abuelos)",
+    label:"Huelva (Donde viven los abuelos Andrés y Felisa)",
     cityImg:"images/huelva/huelva.jpg",
-    welcome:"¡Huelva, la tierra de los abuelos! Aquí, donde se juntan dos ríos antes de llegar al Atlántico, zarparon las carabelas de Colón. Los abuelos ya han puesto la mesa, pero antes hay trabajo: la Smart-Rotom se ha vuelto loca entre los muelles de hierro y los monasterios.",
+    welcome:"¡Huelva! 👵👴 Aquí viven <strong>los abuelos Andrés y Felisa</strong>, y ya han puesto la mesa. Pero antes hay trabajo: en esta tierra, donde se juntan dos ríos antes de llegar al Atlántico, zarparon las carabelas de Colón, y la Smart-Rotom se ha vuelto loca entre los muelles de hierro y los monasterios.",
     places:[
       {
         name:"Muelle del Tinto",
@@ -1635,7 +1713,10 @@ const state = {
   placePokemon: {},
   reviewData: {},
   usedHintsByCity: {},
-  musicEnabled: false
+  musicEnabled: false,
+  modo: "clasico",
+  curso: null,
+  tema: null
 };
 
 let activePlace = null;
@@ -2116,18 +2197,27 @@ function showWin() {
   const routeStr = state.secretRoute.map(function(c){
     return CITY_POOL[c].emoji + " <strong>" + c + "</strong>";
   }).join(" → ");
-  const hasLondon = state.secretRoute.indexOf("Londres") !== -1;
-  const hasCadiz = state.secretRoute.indexOf("Cádiz") !== -1;
-  const hasHuelva = state.secretRoute.indexOf("Huelva") !== -1;
+  // La familia esta repartida por el mapa, pero no se anuncia al empezar la
+  // partida a proposito: la gracia es encontrarselos al llegar a su ciudad.
+  // Aqui, ya ganada, se celebra con los que estaban en la ruta.
+  const FAMILIA = [
+    { ciudad:"Madrid",  texto:"👵👴 ¡Los abuelos Elena y Juanchu os esperan en Madrid con la merienda preparada!" },
+    { ciudad:"Sevilla", texto:"💃 ¡Sofía, Juan y Auxi lo celebran por todo lo alto en Sevilla!" },
+    { ciudad:"Cádiz",   texto:"⚓ ¡El primo Andrés dice que ya se lo olía, desde Cádiz!" },
+    { ciudad:"Huelva",  texto:"⛵ ¡Los abuelos Andrés y Felisa lo celebran en Huelva como se merece!" },
+    { ciudad:"Londres", texto:"🇬🇧 ¡Eduardo Jr. celebra vuestro triunfo transfronterizo desde Londres!" }
+  ];
 
   let html = '';
   html += '<div class="stext" style="text-align:center;background:#fff9db;border:3px solid var(--yellow);border-left:3px solid var(--yellow)">';
   html += '<div style="font-size:.95rem;color:var(--red);margin-bottom:12px;line-height:1.6;font-weight:900">🏆 ¡MAESTROS DE LA GEOGRAFÍA! 🏆</div>';
   html += '<p>¡Habéis descubierto la ruta secreta y capturado a <strong>' + state.legendario.name + '</strong>!</p>';
   html += '<div style="background:#fff;border-radius:10px;padding:11px;margin:10px 0;font-size:.82rem;line-height:2.1">La ruta aleatoria resuelta ha sido:<br>' + routeStr + '</div>';
-  if (hasLondon) html += '<p style="color:#1a237e;font-weight:900">🇬🇧 ¡Eduardo Jr. celebra vuestro triunfo transfronterizo desde Londres!</p>';
-  if (hasCadiz) html += '<p style="color:#1a237e;font-weight:900">⚓ ¡El primo Andrés dice que ya se lo olía, desde Cádiz!</p>';
-  if (hasHuelva) html += '<p style="color:#1a237e;font-weight:900">⛵ ¡Los abuelos os esperan en Huelva para celebrarlo como se merece!</p>';
+  FAMILIA.forEach(function(f){
+    if (state.secretRoute.indexOf(f.ciudad) !== -1) {
+      html += '<p style="color:#1a237e;font-weight:900">' + f.texto + '</p>';
+    }
+  });
   html += '<br><strong style="font-size:1rem">¡Enhorabuena, vuestro mapa está completo!</strong>';
   html += '</div>';
   html += '<button class="sbtn" id="restartBtn">🔄 NUEVA RUTA ALEATORIA</button>';
@@ -2137,22 +2227,45 @@ function showWin() {
   document.getElementById("restartBtn").addEventListener("click", restartGame);
 }
 
+// Todas las preguntas, vengan del monumento o del temario, traen la respuesta
+// correcta en la posicion 0, asi que hay que barajar las opciones aqui: si no,
+// se gana la partida entera pulsando siempre el primer boton.
+function prepararPregunta(pregunta, nombreLugar) {
+  const correctText = pregunta.opts[pregunta.ans];
+  const mixedOpts = shuffle(pregunta.opts);
+  return {
+    name: nombreLugar,
+    q: pregunta.q,
+    opts: mixedOpts,
+    ans: mixedOpts.indexOf(correctText),
+    exp: pregunta.exp || ""
+  };
+}
+
+// En modo repaso las preguntas salen del tema elegido, no del monumento. Se
+// prepara una bolsa barajada y se va repartiendo; si el tema tiene menos
+// preguntas de las que pide la partida, se encadenan barajadas otra vez, que
+// es lo mismo que se hace con los Pokemon.
+function construirBolsaRepaso(necesarias) {
+  const preguntas = preguntasDelTema();
+  if (!preguntas.length) return [];
+  let bolsa = shuffle(preguntas);
+  while (bolsa.length < necesarias) {
+    bolsa = bolsa.concat(shuffle(preguntas));
+  }
+  return bolsa;
+}
+
 function setupPlacesForGame() {
+  const esRepaso = state.modo === "repaso";
+  const necesarias = state.secretRoute.length * 3;
+  const bolsa = esRepaso ? construirBolsaRepaso(necesarias) : [];
+  let cursor = 0;
+
   state.secretRoute.forEach(function(c){
     const selectedPlaces = pick3Places(c).map(function(place){
-      const chosenQuestion = chooseQuestion(place);
-      // Todas las preguntas del CITY_POOL traen la respuesta correcta en la
-      // posicion 0, asi que hay que barajar las opciones aqui: si no, se gana
-      // la partida entera pulsando siempre el primer boton.
-      const correctText = chosenQuestion.opts[chosenQuestion.ans];
-      const mixedOpts = shuffle(chosenQuestion.opts);
-      return {
-        name: place.name,
-        q: chosenQuestion.q,
-        opts: mixedOpts,
-        ans: mixedOpts.indexOf(correctText),
-        exp: chosenQuestion.exp || ""
-      };
+      const origen = esRepaso ? bolsa[cursor++] : chooseQuestion(place);
+      return prepararPregunta(origen, place.name);
     });
     state.activePlaces[c] = selectedPlaces;
     state.donePlaces[c] = new Set();
@@ -2160,6 +2273,14 @@ function setupPlacesForGame() {
 }
 
 function startGame() {
+  // La pantalla de temas solo ofrece los que tienen preguntas, pero si aun asi
+  // el tema elegido se quedara vacio se juega en clasico antes que reventar.
+  if (state.modo === "repaso" && preguntasDelTema().length === 0) {
+    state.modo = "clasico";
+    state.curso = null;
+    state.tema = null;
+  }
+
   state.secretRoute = generateRoute();
   state.routeIndex = 0;
   state.currentCity = "Madrid";
@@ -2176,6 +2297,7 @@ function startGame() {
   state.legendario = LEGENDARIOS[Math.floor(Math.random() * LEGENDARIOS.length)];
   updatePokedex();
   updateRouteBar();
+  actualizarBadgeModo();
   renderScreen();
 }
 
@@ -2201,18 +2323,112 @@ function restartGame() {
   document.getElementById("musicBtn").textContent = state.musicEnabled ? "🔊 Música ON" : "🔇 Música OFF";
   updatePokedex();
 
+  state.modo = "clasico";
+  state.curso = null;
+  state.tema = null;
+  actualizarBadgeModo();
+
+  renderMenuInicio();
+}
+
+// Pantalla 1: a que se juega.
+//
+// A proposito NO se dice aqui quien vive en cada ciudad: la gracia es que
+// aparezcan por sorpresa al llegar. Solo se avisa de que hay familia por ahi.
+function renderMenuInicio() {
   const scr = document.getElementById("screen");
   let html = '';
   html += '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:8px">';
   html += '<h2 style="font-size:.95rem;color:var(--blue);margin-bottom:12px;line-height:1.6">🔴 ¡AVENTURA GEOGRÁFICA v7.3!</h2>';
   html += '<div class="tcard">🧳 <strong>Un Pokémon Clandestino huye de nuevo</strong>. La Smart-Rotom ha detectado una ruta encriptada de <strong>5 ciudades</strong>. Tendréis que seguir pistas, visitar monumentos, responder preguntas y descubrir dónde se esconde el legendario antes de que vuelva a escapar.</div>';
-  html += '<div class="tcard dark">🇬🇧 <strong style="color:#ffcc00">Eduardo Jr.</strong> está preparado en Londres por si aparece allí cualquier información importante sobre el Pokémon.</div>';
-  html += '<div class="tcard dark">👪 Y la familia monta guardia en el sur: <strong style="color:#ffcc00">el primo Andrés</strong> vigila la bahía desde Cádiz y <strong style="color:#ffcc00">los abuelos</strong> no le quitan ojo a la ría de Huelva.</div>';
-  html += '<button class="sbtn" id="startBtn">▶ ENCENDER SMART-ROTOM</button>';
+  html += '<div class="tcard dark">👀 Atentos por el camino: <strong style="color:#ffcc00">hay familia repartida por el mapa</strong>, y no os vamos a decir dónde. Ya aparecerán.</div>';
+  html += '<span class="slbl">¿A qué jugamos?</span>';
+  html += '<button class="sbtn" id="btnClasico">🗺️ MODO CLÁSICO</button>';
+  html += '<div class="submenu-nota">Preguntas sobre los monumentos de cada ciudad.</div>';
+  html += '<button class="sbtn" id="btnRepaso">📚 MODO REPASO</button>';
+  html += '<div class="submenu-nota">La misma aventura, con las mismas ciudades y las mismas pistas, pero las preguntas son del temario del colegio.</div>';
+  if (!hayAlgoQueRepasar()) {
+    html += '<div class="hbox" style="margin-top:4px">De momento no hay ningún tema cargado para repasar. En cuanto se añadan aparecerán aquí, ordenados por curso.</div>';
+  }
   html += '</div>';
   scr.innerHTML = html;
 
-  document.getElementById("startBtn").addEventListener("click", startGame);
+  document.getElementById("btnClasico").addEventListener("click", function(){
+    state.modo = "clasico";
+    state.curso = null;
+    state.tema = null;
+    startGame();
+  });
+  document.getElementById("btnRepaso").addEventListener("click", renderSeleccionCurso);
+}
+
+// Pantalla 2: de que curso.
+function renderSeleccionCurso() {
+  const scr = document.getElementById("screen");
+  let html = '';
+  html += '<div style="padding:8px">';
+  html += '<div class="tcard">📚 <strong>Modo repaso.</strong> Elegid primero el curso y después el tema. Todas las preguntas de la partida saldrán de ese tema.</div>';
+  html += '<span class="slbl">¿De qué curso?</span>';
+  html += '<div class="opts">';
+  CURSOS.forEach(function(c){
+    const n = temasDelCurso(c.id).length;
+    if (n > 0) {
+      html += '<button class="abtn" data-curso="' + c.id + '">' + c.nombre + ' · ' + n + (n === 1 ? ' tema' : ' temas') + '</button>';
+    } else {
+      html += '<button class="tbtn" disabled style="opacity:.5">' + c.nombre + ' · sin temas todavía</button>';
+    }
+  });
+  html += '</div>';
+  html += '<button class="tbtn" id="btnVolver" style="margin-top:8px">⬅️ Volver</button>';
+  html += '</div>';
+  scr.innerHTML = html;
+
+  scr.querySelectorAll("[data-curso]").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      renderSeleccionTema(btn.getAttribute("data-curso"));
+    });
+  });
+  document.getElementById("btnVolver").addEventListener("click", renderMenuInicio);
+}
+
+// Pantalla 3: que tema. Los botones guardan la posicion en la lista, no el
+// nombre, para que un tema con comillas en el titulo no rompa el HTML.
+function renderSeleccionTema(cursoId) {
+  const scr = document.getElementById("screen");
+  const temas = temasDelCurso(cursoId);
+  let html = '';
+  html += '<div style="padding:8px">';
+  html += '<div class="tcard">📚 <strong>' + nombreCurso(cursoId) + '.</strong> ¿Qué toca repasar hoy?</div>';
+  html += '<div class="opts">';
+  temas.forEach(function(t, i){
+    const n = BANCO_REPASO[cursoId][t].length;
+    html += '<button class="abtn" data-tema="' + i + '">' + t + ' · ' + n + (n === 1 ? ' pregunta' : ' preguntas') + '</button>';
+  });
+  html += '</div>';
+  html += '<button class="tbtn" id="btnVolver" style="margin-top:8px">⬅️ Volver</button>';
+  html += '</div>';
+  scr.innerHTML = html;
+
+  scr.querySelectorAll("[data-tema]").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      state.modo = "repaso";
+      state.curso = cursoId;
+      state.tema = temas[Number(btn.getAttribute("data-tema"))];
+      startGame();
+    });
+  });
+  document.getElementById("btnVolver").addEventListener("click", renderSeleccionCurso);
+}
+
+function actualizarBadgeModo() {
+  const badge = document.getElementById("modo-badge");
+  if (state.modo === "repaso" && state.tema) {
+    badge.textContent = "📚 " + nombreCurso(state.curso) + " · " + state.tema;
+    badge.classList.remove("hidden");
+  } else {
+    badge.textContent = "";
+    badge.classList.add("hidden");
+  }
 }
 
 function toggleMusic() {

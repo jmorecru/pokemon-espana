@@ -10,6 +10,18 @@ Hecho para uso familiar, sin frameworks ni herramientas de compilación: un úni
 
 **Jugar:** https://jmorecru.github.io/pokemon-espana/
 
+## Dos modos
+
+Al entrar se elige a qué se juega:
+
+- **Modo clásico** — las preguntas son sobre los monumentos de cada ciudad.
+- **Modo repaso** — la misma aventura, con las mismas ciudades y las mismas pistas, pero
+  las preguntas salen del temario del colegio. Se elige curso (1º, 3º o 5º) y después el
+  tema, y toda la partida sale de ahí. El monumento pasa a ser solo el escenario.
+
+Los temas se cargan en la constante `BANCO_REPASO` del `index.html`, que lleva encima un
+comentario con el formato y un ejemplo. Mientras no haya ninguno, el modo repaso lo avisa.
+
 ## Qué hace
 
 - **Ruta aleatoria en cada partida**: Madrid siempre es el punto de partida, la ciudad
@@ -30,11 +42,9 @@ Hecho para uso familiar, sin frameworks ni herramientas de compilación: un úni
 
 ## La familia en el mapa
 
-Tres ciudades son de los suyos, y el juego los menciona cuando la ruta pasa por allí:
-
-- **Londres** — Eduardo Jr.
-- **Cádiz** — el primo Andrés.
-- **Huelva** — los abuelos.
+Cinco ciudades tienen familia esperando, y **el juego no dice cuáles al empezar**: la
+gracia es encontrárselos al llegar. Aparecen al entrar en su ciudad y vuelven a salir en
+la pantalla de victoria si la ruta pasó por allí.
 
 ## Cómo funciona por dentro
 

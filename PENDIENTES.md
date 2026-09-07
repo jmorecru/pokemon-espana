@@ -48,23 +48,33 @@ comprueba, `routeIndex` ya se ha incrementado) y estorba para entender el flujo.
 
 ---
 
-## 📚 El banco de preguntas: repaso del colegio
+## 📚 El banco de preguntas: falta el temario
 
-Ahora las 390 preguntas son de geografía y monumentos. La idea es que el juego sirva
-además para repasar lo que estudian los niños.
+**La mecánica ya está hecha y probada.** Al entrar se elige entre **modo clásico**
+(preguntas de los monumentos, el juego de siempre) y **modo repaso**; si se elige repaso,
+se pide el curso y después el tema, y todas las preguntas de esa partida salen de ahí.
+El resto del juego no cambia: mismas ciudades, misma ruta secreta, mismas pistas y mismos
+Pokémon; el monumento pasa a ser solo el escenario.
 
-- [ ] **Preguntas por curso y tema, no por monumento.** El temario lo irás pasando tú
-      (primero, tercero y quinto), y de ahí se sacan las preguntas de repaso.
+Lo único que falta es el contenido:
 
-- [ ] **Elegir curso y temas al empezar la partida.** Una pantalla de selección antes de
-      encender la Smart-Rotom, y las preguntas de esa partida salen solo de lo elegido.
+- [ ] **Cargar los temas conforme avance el curso.** Van en la constante `BANCO_REPASO`
+      del `index.html`, dentro de `"1"`, `"3"` o `"5"`. Justo encima hay un comentario con
+      el formato y un ejemplo. Cada tema es una lista de preguntas con el mismo formato
+      que las del `CITY_POOL`: tres opciones, la correcta la primera (el juego las baraja)
+      y una explicación opcional.
 
-**Lo que hay que replantear al hacerlo.** Hoy cada pregunta vive *dentro* de su monumento
-en el `CITY_POOL`, y eso deja de valer: hará falta un banco aparte, indexado por curso y
-tema, y que el monumento solo aporte el escenario. Es exactamente el motivo por el que
-merece la pena separar los datos del `index.html` (ver más abajo). Hay que decidir
-también si las preguntas de monumentos se conservan como un "tema" más —geografía de
-España— para no perder las 390 que ya están escritas y comprobadas.
+Decisiones ya tomadas, por si hay que retomarlo:
+
+- **Un solo tema por partida**, no varios mezclados: así se repasa un examen concreto.
+- **Las 390 preguntas de geografía se quedan solo en modo clásico**, no aparecen como un
+  tema de repaso.
+- **Un tema funciona con las preguntas que tenga.** Una partida necesita 15 (5 ciudades ×
+  3 monumentos); si el tema tiene menos, la bolsa se baraja y se encadena, igual que se
+  hace con los Pokémon. Comprobado con un tema de 4 preguntas: rellena los 15 huecos sin
+  dejar ninguno vacío.
+- **Los cursos sin temas salen deshabilitados** y el menú avisa de que todavía no hay nada
+  que repasar, para que la opción no lleve a una pantalla vacía.
 
 ---
 
@@ -132,9 +142,9 @@ si la pregunta trae explicación, la muestra con una bombilla. Lo que falta es e
 
 - [ ] **Un solo archivo de más de 2000 líneas.** La mayor parte son los datos del
       `CITY_POOL`. Editar o añadir preguntas obliga a navegar por un archivo enorme y hace
-      los diffs de git ilegibles. Separar los datos a un `data/ciudades.js` es el cambio
-      que más facilita seguir añadiendo contenido, y es **requisito práctico** para el
-      banco de preguntas por temario.
+      los diffs de git ilegibles. Separar los datos a un `data/ciudades.js` y un
+      `data/repaso.js` es el cambio que más facilita seguir añadiendo contenido, y va a
+      notarse en cuanto el banco de repaso empiece a llenarse de temas.
 
 - [ ] **Revisar las preguntas de Cádiz y Huelva en familia.** Las 60 se escribieron de una
       vez y, aunque están comprobadas, conviene que las lea alguien que conozca las dos
@@ -198,12 +208,43 @@ pistas están alineadas paso a paso, todas las notas son válidas, y al apagar l
 queda ninguna voz sonando —hay que cortarlas a mano porque el planificador va medio
 segundo por delante del reloj de audio—.
 
+### Los dos modos de juego
+
+Al entrar se elige entre **modo clásico** y **modo repaso**, y si es repaso se pide curso
+y tema. Está descrito arriba; lo único que falta es cargar el temario.
+
+Verificado en Edge sin ventana: el flujo entero de tres pantallas, que con el banco vacío
+los cursos salen deshabilitados y avisando, que las 15 preguntas de una partida de repaso
+salen todas del tema elegido mientras los 15 monumentos siguen siendo los de sus ciudades,
+que las opciones también se barajan en repaso, que un tema de 4 preguntas rellena los 15
+huecos, y que el modo clásico sigue sacando sus 15 preguntas de los monumentos.
+
+### La familia está repartida por el mapa
+
+Cinco ciudades tienen familia, y **no se dice cuáles al empezar la partida**: aparecen por
+sorpresa en el texto de bienvenida al llegar, y se les vuelve a mencionar en la pantalla de
+victoria si la ruta pasó por allí. La pantalla de inicio solo suelta un aviso genérico de
+que hay familia por ahí.
+
+| Ciudad | Quién |
+| --- | --- |
+| Madrid | Los abuelos Elena y Juanchu |
+| Sevilla | Los primos Sofía, Juan y Auxi |
+| Cádiz | El primo Andrés |
+| Huelva | Los abuelos Andrés y Felisa |
+| Londres | Eduardo Jr. |
+
+Están en la constante `FAMILIA` dentro de `showWin()` y en el `welcome` de cada ciudad;
+añadir una más es tocar esos dos sitios. Hay una prueba que comprueba que ningún nombre ni
+ninguna de esas ciudades se cuela en la pantalla de inicio.
+
+Las pistas de `HINTS` tampoco mencionan a nadie, aunque las de Cádiz y Huelva llegaron a
+hacerlo: si la pista dice quién vive allí, la sorpresa se destripa antes de llegar.
+
 ### Cádiz y Huelva
 
 Añadidas con 6 monumentos y 5 preguntas cada uno (60 nuevas), sus dos pistas en `HINTS` y
-sus 14 imágenes. Cádiz es la ciudad del **primo Andrés** y Huelva la de **los abuelos**,
-igual que Londres es la de Eduardo Jr.: se les menciona en el texto de bienvenida de su
-ciudad, en la pantalla de inicio y en la de victoria si la ruta pasó por allí.
+sus 14 imágenes.
 
 De paso mejora la variedad de las partidas: antes las ciudades intermedias se sorteaban
 entre 4, así que salían casi siempre las mismas. Ahora se sortean entre 6. Medido en 300

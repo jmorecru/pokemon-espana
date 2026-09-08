@@ -1,6 +1,6 @@
 # Temas pendientes
 
-Última revisión: **8 de septiembre de 2026**. Versión publicada: **8.2**.
+Última revisión: **8 de septiembre de 2026**. Versión publicada: **8.3**.
 
 > **Al desplegar, subir la versión.** Hay que tocar dos sitios y es adrede: `VERSION` y
 > `VERSION_FECHA` en [js/version.js](js/version.js), que es lo que se ve en pantalla, y el
@@ -133,6 +133,30 @@ Se cargan como **scripts clásicos**, no como módulos ES, a propósito: el nave
 `<script src>` relativo desde `file://` pero **no** acepta módulos ni `fetch`. Así se
 sigue pudiendo abrir el juego con doble clic, que es como se juega en casa. Verificado
 lanzando el banco de pruebas por `file://`, no por servidor.
+
+### El mapa
+
+El juego era de geografía y no tenía mapa: todas las pistas hablan de direcciones y no
+había dónde mirar. Ahora hay una silueta de la península en SVG, dibujada a mano sin
+ninguna librería, con el norte marcado, la frontera con Portugal a trazos y las ciudades
+en rojo (aquí), verde (visitada), amarillo (destino posible) o gris (las demás).
+
+**Las ciudades se colocan por latitud y longitud reales**, pasadas por una única función de
+proyección con corrección de achatamiento —sin ella España sale estirada a lo ancho—. Esa
+es la decisión importante: **añadir una ciudad es escribir sus dos coordenadas**, no colocar
+un punto a ojo, así que el mapa no se resiente al crecer.
+
+Londres no cabe en el marco y sale en un recuadro aparte con una flecha, como en los mapas
+de verdad. **Ese recuadro es también el hueco previsto para las Canarias**: están a unos
+1.000 km al suroeste y tampoco caben. Baleares sí cabe sin tocar nada, porque Palma queda
+dentro del rango de longitud que el marco ya necesita para Girona.
+
+Se puede plegar con un botón, porque ocupa cerca de un tercio del alto de un móvil. **Falta
+verlo en el teléfono** para decidir si el alto de 180 px está bien.
+
+Comprobado: las 12 ciudades peninsulares caen dentro del lienzo, se dibuja un punto por
+cada una, Bilbao sale al norte de Cádiz y Girona al este de Santiago, hay un solo punto de
+"aquí", los destinos son tres contando el recuadro, y el plegado funciona.
 
 ### Las pistas: ni se repiten ni se aprenden
 

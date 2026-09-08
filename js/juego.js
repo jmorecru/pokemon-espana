@@ -95,6 +95,7 @@ const state = {
   volverA: null,
   costeVuelta: 0,
   musicEnabled: false,
+  mapaVisible: true,
   modo: "clasico",
   curso: null,
   tema: null
@@ -206,8 +207,10 @@ function getHintForCurrentCity() {
   // Nunca se repite una pista en la misma ciudad. Antes, agotadas las
   // disponibles, se volvia a sortear entre todas, y como habia dos pistas por
   // ciudad y tres monumentos que investigar, la tercera repetia siempre. Ahora
-  // hay tres pistas por ciudad, justo una por monumento; si alguna vez hubiera
-  // menos, se dice que no queda nada nuevo antes que repetir.
+  // hay seis pistas por ciudad para tres monumentos, asi que cada partida
+  // ensena tres al azar y ni se repiten ni se aprenden; si alguna vez hubiera
+  // menos pistas que monumentos, se dice que no queda nada nuevo antes que
+  // repetir una.
   if (!available.length) {
     return "Rebuscáis por todas partes, pero el rastro no dice nada nuevo: la pista que ya teníais es todo lo que hay aquí.";
   }
@@ -378,6 +381,7 @@ function renderScreen() {
   activePI = null;
   playTrack("city", true);
   pintarReloj();
+  pintarMapa();
 
   document.getElementById("cb").textContent = city.country + " " + city.label;
 
@@ -780,6 +784,7 @@ function restartGame() {
   pintarReloj();
 
   document.getElementById("rp").style.display = "none";
+  pintarMapa();
   document.getElementById("cb").textContent = "—";
   document.getElementById("musicBtn").textContent = state.musicEnabled ? "🔊 Música ON" : "🔇 Música OFF";
   updatePokedex();
@@ -923,5 +928,13 @@ function toggleMusic() {
 document.getElementById("ver").textContent = "v" + VERSION + " · " + VERSION_FECHA;
 
 document.getElementById("modalBtn").addEventListener("click", closeModal);
+// El mapa ocupa bastante alto, y en un movil eso se nota. Se puede plegar.
+function toggleMapa() {
+  state.mapaVisible = !state.mapaVisible;
+  document.getElementById("mapaBtn").textContent = state.mapaVisible ? "🗺️ Mapa" : "🗺️ Ver mapa";
+  pintarMapa();
+}
+
+document.getElementById("mapaBtn").addEventListener("click", toggleMapa);
 document.getElementById("musicBtn").addEventListener("click", toggleMusic);
 restartGame();

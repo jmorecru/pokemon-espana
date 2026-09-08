@@ -34,6 +34,19 @@ lunes a domingo, parando a dormir por la noche. Son 96 horas útiles, y cada cos
 | Cruzar el mar | 12 h |
 | Volver de una ciudad equivocada | lo mismo que costó ir |
 
+## El mapa
+
+Arriba se ve un mapa de la península con las ciudades colocadas por sus **coordenadas
+reales**, el norte marcado y la frontera con Portugal dibujada. Se marca en rojo dónde
+estáis, en verde por dónde habéis pasado y en amarillo los destinos que se pueden elegir.
+
+Está porque todas las pistas hablan de direcciones —*sube al norte*, *va al levante*, *baja
+al sur profundo*— y sin un mapa delante eso no significa nada para un niño: con él la pista
+se razona en vez de adivinarse. Londres, que no cabe en el marco, sale en un recuadro
+aparte con una flecha, como en los mapas de verdad.
+
+Se puede plegar con el botón **🗺️ Mapa**, que en pantallas pequeñas viene bien.
+
 Desde cada ciudad solo se ofrecen **3 destinos**: el bueno y dos señuelos. Si se acierta,
 el rastro sigue; si no, allí no hay nada que hacer salvo volver, y se paga el viaje dos
 veces. Por eso las pistas importan: una partida bien llevada cuesta unas 47 horas y sobra
@@ -79,8 +92,10 @@ la pantalla de victoria si la ruta pasó por allí.
   | --- | --- |
   | `data/ciudades.js` | Las 13 ciudades, sus 78 monumentos y las 390 preguntas |
   | `data/pistas.js` | Las 72 pistas, 6 por cada ciudad de destino |
+  | `data/mapa.js` | La silueta de la península y la frontera con Portugal |
   | `data/repaso.js` | El temario del colegio, por curso y tema |
   | `data/pokemon.js` | Los legendarios y el catálogo de Pokémon |
+  | `js/mapa.js` | Dibuja el mapa y coloca las ciudades por coordenadas |
   | `js/musica.js` | La afinación, las tres melodías y el sintetizador |
   | `js/juego.js` | El reloj, la ruta, las pantallas y el reparto de preguntas |
   | `styles.css` | Todo el aspecto |
@@ -105,7 +120,7 @@ Sigue necesitando conexión para cargar: no hay service worker todavía.
 
 ## Saber si estás viendo la última versión
 
-Debajo del título salen la versión y su fecha, con el formato `v8.2 · 2026-09-08`. Si no
+Debajo del título salen la versión y su fecha, con el formato `v8.3 · 2026-09-08`. Si no
 coincide con lo último que se publicó, el móvil está tirando de caché — pasa sobre todo
 con el atajo de la pantalla de inicio en iOS, que se queda con los archivos pegados.
 

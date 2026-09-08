@@ -383,3 +383,79 @@ button:active{transform:scale(.98)}
 .mt.ok{color:#38a169}
 .mt.ko{color:#e53e3e}
 .mx{font-size:.95rem;margin-bottom:14px;line-height:1.5;font-weight:700}
+
+/* ---- El mapa de la persecucion ---- */
+#mapa{
+  background:#0d1b46;
+  padding:7px 10px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+/* Espana es mas ancha que alta, asi que el dibujo se ajusta por el alto y
+   sobra sitio a los lados: ahi va el cartucho de lo que cae fuera del marco. */
+.mapa-svg{
+  display:block;
+  flex:1 1 auto;
+  min-width:0;
+  height:180px;
+}
+.mapa-tierra{
+  fill:rgba(255,255,255,.10);
+  stroke:rgba(255,255,255,.34);
+  stroke-width:1;
+}
+.mapa-frontera{
+  fill:none;
+  stroke:rgba(255,255,255,.28);
+  stroke-width:.8;
+  stroke-dasharray:2.5 2.5;
+}
+.mapa-norte path{
+  fill:none;
+  stroke:rgba(255,255,255,.45);
+  stroke-width:1.6;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.mapa-norte text{
+  fill:rgba(255,255,255,.55);
+  font-family:Arial, Helvetica, sans-serif;
+  font-size:9px;
+  font-weight:900;
+  text-anchor:middle;
+}
+.mapa-punto{stroke:#0d1b46;stroke-width:1.2}
+.mapa-otra{fill:rgba(255,255,255,.30);stroke:none}
+.mapa-visitada{fill:var(--green)}
+.mapa-destino{fill:var(--yellow)}
+.mapa-aqui{fill:var(--red);stroke:#fff;stroke-width:1.6}
+.mapa-nombre{
+  font-family:Arial, Helvetica, sans-serif;
+  font-size:7.5px;
+  font-weight:900;
+  paint-order:stroke;
+  stroke:#0d1b46;
+  stroke-width:2.5;
+  stroke-linejoin:round;
+}
+.mapa-nombre-aqui{fill:#fff;font-size:8.5px}
+.mapa-nombre-destino{fill:var(--yellow)}
+.mapa-nombre-visitada{fill:rgba(255,255,255,.55);font-size:7px}
+.mapa-fuera{
+  flex:0 0 auto;
+  max-width:34%;
+  border:1px dashed rgba(255,255,255,.3);
+  border-radius:8px;
+  padding:6px 8px;
+  font-size:.66rem;
+  font-weight:900;
+  color:rgba(255,255,255,.55);
+  text-align:center;
+  line-height:1.45;
+}
+.mapa-fuera span{display:block;font-weight:700;opacity:.7;font-size:.6rem}
+.mapa-fuera-destino{border-color:var(--yellow);color:var(--yellow)}
+.mapa-fuera-aqui{border-color:var(--red);border-style:solid;color:#fff}
+.mapa-fuera-visitada{border-color:var(--green);color:#9ae6b4}

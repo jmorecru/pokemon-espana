@@ -8,6 +8,7 @@
 
 const CITY_POOL = {
   "Madrid": {
+    lat:40.4168, lon:-3.7038,
     emoji:"🏛️",
     country:"🇪🇸",
     label:"Madrid (Donde vivimos)",
@@ -84,6 +85,7 @@ const CITY_POOL = {
   },
 
   "Bilbao": {
+    lat:43.263, lon:-2.935,
     emoji:"🌉",
     country:"🇪🇸",
     label:"Bilbao (Donde nació mamá)",
@@ -160,6 +162,7 @@ const CITY_POOL = {
   },
 
   "Sevilla": {
+    lat:37.3891, lon:-5.9845,
     emoji:"🌸",
     country:"🇪🇸",
     label:"Sevilla (Donde viven los primos Sofía, Juan y Auxi)",
@@ -236,6 +239,7 @@ const CITY_POOL = {
   },
 
   "Barcelona": {
+    lat:41.3874, lon:2.1686,
     emoji:"🏖️",
     country:"🇪🇸",
     label:"Barcelona (Ciudad de Gaudí)",
@@ -312,6 +316,7 @@ const CITY_POOL = {
   },
 
   "Girona": {
+    lat:41.9794, lon:2.8214,
     emoji:"🏰",
     country:"🇪🇸",
     label:"Girona (Ciudad Medieval)",
@@ -388,6 +393,7 @@ const CITY_POOL = {
   },
 
   "Granada": {
+    lat:37.1773, lon:-3.5986,
     emoji:"🌹",
     country:"🇪🇸",
     label:"Granada (La Alhambra)",
@@ -464,6 +470,7 @@ const CITY_POOL = {
   },
 
   "Valencia": {
+    lat:39.4699, lon:-0.3763,
     emoji:"🍊",
     country:"🇪🇸",
     label:"Valencia (La Ciudad de la Luz)",
@@ -540,6 +547,7 @@ const CITY_POOL = {
   },
 
   "Toledo": {
+    lat:39.8628, lon:-4.0273,
     emoji:"⚔️",
     country:"🇪🇸",
     label:"Toledo (Ciudad Imperial)",
@@ -616,6 +624,7 @@ const CITY_POOL = {
   },
 
   "Santiago de Compostela": {
+    lat:42.8782, lon:-8.5448,
     emoji:"🌟",
     country:"🇪🇸",
     label:"Santiago de Compostela",
@@ -692,6 +701,7 @@ const CITY_POOL = {
   },
 
   "Salamanca": {
+    lat:40.9701, lon:-5.6635,
     emoji:"🎓",
     country:"🇪🇸",
     label:"Salamanca (La Ciudad Dorada)",
@@ -768,6 +778,7 @@ const CITY_POOL = {
   },
 
   "Londres": {
+    lat:51.5074, lon:-0.1278,
     emoji:"🇬🇧",
     country:"🇬🇧",
     label:"¡Londres! (Primo Eduardo Jr.)",
@@ -844,6 +855,7 @@ const CITY_POOL = {
     ]
   },
   "Cádiz": {
+    lat:36.5271, lon:-6.2886,
     emoji:"⚓",
     country:"🇪🇸",
     label:"Cádiz (Donde vive el primo Andrés)",
@@ -919,6 +931,7 @@ const CITY_POOL = {
     ]
   },
   "Huelva": {
+    lat:37.2614, lon:-6.9447,
     emoji:"⛵",
     country:"🇪🇸",
     label:"Huelva (Donde viven los abuelos Andrés y Felisa)",

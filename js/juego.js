@@ -792,7 +792,7 @@ function renderMenuInicio() {
   const scr = document.getElementById("screen");
   let html = '';
   html += '<div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:8px">';
-  html += '<h2 style="font-size:.95rem;color:var(--blue);margin-bottom:12px;line-height:1.6">🔴 ¡AVENTURA GEOGRÁFICA v7.3!</h2>';
+  html += '<h2 style="font-size:.95rem;color:var(--blue);margin-bottom:12px;line-height:1.6">🔴 ¡AVENTURA GEOGRÁFICA v' + VERSION + '!</h2>';
   html += '<div class="tcard">🧳 <strong>Un Pokémon Clandestino huye de nuevo</strong>. La Smart-Rotom ha detectado una ruta encriptada de <strong>5 ciudades</strong>. Tendréis que seguir pistas, visitar monumentos, responder preguntas y descubrir dónde se esconde el legendario antes de que vuelva a escapar.</div>';
   html += '<div class="tcard">⏰ <strong>Tenéis una semana</strong>, de lunes a domingo, parando a dormir: ' + TIEMPO_TOTAL + ' horas para atraparlo. Investigar un monumento cuesta <strong>' + TIEMPO.investigar + ' h</strong> y cada viaje <strong>' + TIEMPO.viaje + ' h</strong>, más si hay que cruzar el mar. Equivocarse de ciudad se paga a la ida <em>y</em> a la vuelta, así que haced caso a las pistas.</div>';
   html += '<div class="tcard dark">👀 Atentos por el camino: <strong style="color:#ffcc00">hay familia repartida por el mapa</strong>, y no os vamos a decir dónde. Ya aparecerán.</div>';
@@ -909,6 +909,10 @@ function toggleMusic() {
     btn.textContent = "🔇 Música OFF";
   }
 }
+
+// El sello de version, siempre a la vista: si no coincide con lo ultimo que se
+// publico, el movil esta tirando de cache.
+document.getElementById("ver").textContent = "v" + VERSION + " · " + VERSION_FECHA;
 
 document.getElementById("modalBtn").addEventListener("click", closeModal);
 document.getElementById("musicBtn").addEventListener("click", toggleMusic);

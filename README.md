@@ -93,6 +93,27 @@ la pantalla de victoria si la ruta pasó por allí.
   Es lo único que necesita conexión.
 - **Hosting**: GitHub Pages.
 
+## Añadirlo al móvil como una app
+
+En **Safari** (en iPhone tiene que ser Safari), abre
+https://jmorecru.github.io/pokemon-espana/ → botón **Compartir** → **Añadir a pantalla de
+inicio** → **Añadir**. Queda con su icono de Poké Ball y se abre a pantalla completa, sin
+la barra de direcciones. En Android es lo mismo desde el menú de Chrome.
+
+Sigue necesitando conexión para cargar: no hay service worker todavía.
+
+## Saber si estás viendo la última versión
+
+Debajo del título sale la versión y su fecha, por ejemplo `v8.0 · 2026-09-07`. Si no
+coincide con lo último que se publicó, el móvil está tirando de caché — pasa sobre todo
+con el atajo de la pantalla de inicio en iOS, que se queda con los archivos pegados.
+
+Para forzar la recarga en iOS: Ajustes → Safari → Borrar historial y datos, o borrar el
+atajo y volver a añadirlo.
+
+El número vive en un solo sitio, [js/version.js](js/version.js), y de ahí sale tanto el
+sello de la cabecera como el de la pantalla de inicio.
+
 ## Ponerlo en marcha
 
 No hace falta servidor ni instalar nada: basta abrir `index.html` con doble clic. Los

@@ -7,14 +7,27 @@
      necesita agrandar la letra. -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3CclipPath id='c'%3E%3Ccircle cx='16' cy='16' r='15'/%3E%3C/clipPath%3E%3C/defs%3E%3Cg clip-path='url(%23c)'%3E%3Crect width='32' height='16' fill='%23cc0000'/%3E%3Crect y='16' width='32' height='16' fill='%23fff'/%3E%3Crect y='14' width='32' height='4' fill='%230a285f'/%3E%3C/g%3E%3Ccircle cx='16' cy='16' r='15' fill='none' stroke='%230a285f' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='5.5' fill='%23fff' stroke='%230a285f' stroke-width='2'/%3E%3C/svg%3E">
-<title>Pokémon España: En Busca del Legendario v7.3</title>
-<link rel="stylesheet" href="styles.css">
+<title>Pokémon España: En Busca del Legendario</title>
+
+<!-- Para poder anadirlo a la pantalla de inicio como si fuera una app.
+     iOS necesita lo suyo aparte del manifiesto: no admite SVG en el
+     apple-touch-icon, asi que va un PNG de 180, y las versiones antiguas de
+     Safari ignoran el manifiesto y solo miran estas etiquetas apple-*. -->
+<meta name="theme-color" content="#0a285f">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Pokémon España">
+
+<link rel="stylesheet" href="styles.css?v=8.0">
 </head>
 <body>
 <div id="gc">
   <header>
     <h1>Pokémon España 🇪🇸</h1>
     <p>En busca del Legendario Clandestino</p>
+    <span id="ver" class="ver"></span>
   </header>
 
   <div id="sb">
@@ -46,11 +59,12 @@
   </div>
 </div>
 
-<script src="data/pokemon.js"></script>
-<script src="data/pistas.js"></script>
-<script src="data/ciudades.js"></script>
-<script src="data/repaso.js"></script>
-<script src="js/musica.js"></script>
-<script src="js/juego.js"></script>
+<script src="js/version.js?v=8.0"></script>
+<script src="data/pokemon.js?v=8.0"></script>
+<script src="data/pistas.js?v=8.0"></script>
+<script src="data/ciudades.js?v=8.0"></script>
+<script src="data/repaso.js?v=8.0"></script>
+<script src="js/musica.js?v=8.0"></script>
+<script src="js/juego.js?v=8.0"></script>
 </body>
 </html>

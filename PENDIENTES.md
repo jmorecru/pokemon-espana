@@ -1,6 +1,12 @@
 # Temas pendientes
 
-Última revisión: **7 de septiembre de 2026**.
+Última revisión: **7 de septiembre de 2026**. Versión publicada: **8.0**.
+
+> **Al desplegar, subir la versión.** Hay que tocar dos sitios y es adrede: `VERSION` y
+> `VERSION_FECHA` en [js/version.js](js/version.js), que es lo que se ve en pantalla, y el
+> `?v=...` de los `<script>` y del `<link>` de [index.html](index.html), que es lo que
+> obliga al navegador a bajar los archivos otra vez. Sin esto no hay forma de saber si el
+> móvil está viendo lo último o una copia en caché.
 
 ---
 
@@ -71,12 +77,16 @@ si la pregunta trae explicación, la muestra con una bombilla. Falta el texto.
 
 ## 🔵 Limpieza y calidad
 
-- [ ] **No es instalable como PasaporteLector.** No hay `manifest.json` ni service worker,
-      así que no se puede "Añadir a pantalla de inicio" ni jugar sin conexión. Ahora que
-      la música se sintetiza y las imágenes son locales, el juego **no necesita red para
-      nada salvo los sprites**, y esos ya tienen recambio dibujado, así que como PWA
-      funcionaría entero sin cobertura. Se puede copiar el enfoque de
-      [pasaporte-lector](https://github.com/jmorecru/pasaporte-lector).
+- [ ] **Jugar sin conexión.** Ya se puede añadir a la pantalla de inicio con su icono y
+      a pantalla completa (ver abajo), pero **sigue necesitando red para cargar**: falta el
+      service worker. Con la música sintetizada, las imágenes en local y los sprites con
+      recambio dibujado, el juego funcionaría entero sin cobertura.
+
+      **Se ha dejado a propósito para más adelante.** Un service worker sirve los archivos
+      desde su propia caché, y mientras el juego siga cambiando cada semana el riesgo es
+      justo el que queremos evitar: que el móvil se quede con una versión vieja y no se
+      note. Cuando el juego se asiente, se hace con una caché versionada que se limpia al
+      cambiar `VERSION`.
 
 - [ ] **Revisar las preguntas de Cádiz y Huelva en familia.** Las 60 se escribieron de una
       vez y, aunque están comprobadas, conviene que las lea alguien que conozca las dos
@@ -123,6 +133,25 @@ Se cargan como **scripts clásicos**, no como módulos ES, a propósito: el nave
 `<script src>` relativo desde `file://` pero **no** acepta módulos ni `fetch`. Así se
 sigue pudiendo abrir el juego con doble clic, que es como se juega en casa. Verificado
 lanzando el banco de pruebas por `file://`, no por servidor.
+
+### Se puede añadir al móvil como una app
+
+`manifest.json` con nombre, colores y iconos, más las etiquetas que iOS necesita aparte:
+no admite SVG en el `apple-touch-icon`, así que va un PNG de 180, y las versiones antiguas
+de Safari ignoran el manifiesto y solo miran las `apple-*`. Con
+`apple-mobile-web-app-capable` se abre a pantalla completa, sin barra de direcciones.
+
+Los iconos (180, 192, 512 y un 512 *maskable* con más margen, que Android recorta en
+círculo) se dibujan con un script a 8x y se reducen, para que los bordes salgan suaves.
+
+### El sello de versión
+
+La versión sale en la cabecera y en la pantalla de inicio, y vive en un solo sitio,
+`js/version.js`. Sirve para lo de siempre: saber si el móvil está viendo lo último o una
+copia en caché, que con el atajo de iOS es fácil que se quede pegada.
+
+Los `<script>` y el `<link>` llevan `?v=` para forzar la recarga. Si el número de pantalla
+no coincide con lo publicado, el caché está en el propio `index.html`.
 
 ### El audio en iPhone
 

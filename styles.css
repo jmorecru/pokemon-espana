@@ -44,6 +44,14 @@ header h1{
   color:var(--yellow);
   line-height:1.5;
 }
+.ver{
+  display:block;
+  margin-top:5px;
+  font-size:.62rem;
+  font-weight:900;
+  letter-spacing:.5px;
+  color:rgba(255,255,255,.45);
+}
 header p{
   margin:6px 0 0;
   font-size:.8rem;

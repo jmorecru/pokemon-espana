@@ -105,7 +105,7 @@ Sigue necesitando conexión para cargar: no hay service worker todavía.
 
 ## Saber si estás viendo la última versión
 
-Debajo del título sale la versión y su fecha, por ejemplo `v8.0 · 2026-09-07`. Si no
+Debajo del título salen la versión y su fecha, con el formato `v8.2 · 2026-09-08`. Si no
 coincide con lo último que se publicó, el móvil está tirando de caché — pasa sobre todo
 con el atajo de la pantalla de inicio en iOS, que se queda con los archivos pegados.
 

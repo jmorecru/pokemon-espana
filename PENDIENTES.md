@@ -9,9 +9,9 @@
 La mecánica del modo repaso está hecha y probada. **Lo único que falta es el contenido.**
 
 - [ ] **Cargar los temas conforme avance el curso.** Van en la constante `BANCO_REPASO`
-      del `index.html`, dentro de `"1"`, `"3"` o `"5"`. Justo encima hay un comentario con
+      de `data/repaso.js`, dentro de `"1"`, `"3"` o `"5"`. Justo encima hay un comentario con
       el formato y un ejemplo. Cada tema es una lista de preguntas igual que las del
-      `CITY_POOL`: tres opciones, la correcta la primera (el juego las baraja) y una
+      de las ciudades: tres opciones, la correcta la primera (el juego las baraja) y una
       explicación opcional que se muestra al fallar.
 
       El temario se puede pasar **en fotos** del libro o de la libreta: se leen y se
@@ -232,7 +232,7 @@ sorpresa antes de llegar. Hay una prueba que lo comprueba.
 
 ### La respuesta correcta ya no es siempre el primer botón
 
-Las 390 preguntas del `CITY_POOL` tienen `ans: 0`, y antes las opciones se pintaban en ese
+Las 390 preguntas de `data/ciudades.js` tienen `ans: 0`, y antes las opciones se pintaban en ese
 orden: **se ganaba la partida pulsando siempre el primer botón**. `setupPlacesForGame()`
 baraja ahora las opciones y recalcula el índice de la correcta buscando su texto.
 

@@ -5,8 +5,8 @@ una ruta secreta de **5 ciudades** por la que huye un Pokémon legendario: hay q
 investigar monumentos, responder preguntas sobre ellos y seguir las pistas hasta dar con
 él.
 
-Hecho para uso familiar, sin frameworks ni herramientas de compilación: un único
-`index.html` con el CSS y el JavaScript dentro.
+Hecho para uso familiar, sin frameworks ni herramientas de compilación: HTML, CSS y
+JavaScript que el navegador carga directamente.
 
 **Jugar:** https://jmorecru.github.io/pokemon-espana/
 
@@ -19,7 +19,7 @@ Al entrar se elige a qué se juega:
   las preguntas salen del temario del colegio. Se elige curso (1º, 3º o 5º) y después el
   tema, y toda la partida sale de ahí. El monumento pasa a ser solo el escenario.
 
-Los temas se cargan en la constante `BANCO_REPASO` del `index.html`, que lleva encima un
+Los temas se cargan en la constante `BANCO_REPASO` de `data/repaso.js`, que lleva encima un
 comentario con el formato y un ejemplo. Mientras no haya ninguno, el modo repaso lo avisa.
 
 ## Contra el reloj

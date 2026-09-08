@@ -1,6 +1,6 @@
 # Temas pendientes
 
-Última revisión: **8 de septiembre de 2026**. Versión publicada: **8.1**.
+Última revisión: **8 de septiembre de 2026**. Versión publicada: **8.2**.
 
 > **Al desplegar, subir la versión.** Hay que tocar dos sitios y es adrede: `VERSION` y
 > `VERSION_FECHA` en [js/version.js](js/version.js), que es lo que se ve en pantalla, y el
@@ -134,24 +134,31 @@ Se cargan como **scripts clásicos**, no como módulos ES, a propósito: el nave
 sigue pudiendo abrir el juego con doble clic, que es como se juega en casa. Verificado
 lanzando el banco de pruebas por `file://`, no por servidor.
 
-### Las pistas de una ciudad ya no se repiten
+### Las pistas: ni se repiten ni se aprenden
 
 Había **2 pistas por ciudad** pero se pueden investigar **3 monumentos**, así que la
 tercera repetía siempre: agotadas las disponibles, `getHintForCurrentCity()` volvía a
 sortear entre todas. Detectado jugando.
 
-Arreglado por los dos lados: se ha escrito **una tercera pista para cada una de las 12
-ciudades**, justo una por monumento, y el código ya no repite nunca — si alguna vez
-hubiera menos pistas que monumentos, dice que no queda nada nuevo antes que repetir.
+Arreglado por los dos lados: el código **ya no repite nunca** —si alguna vez hubiera menos
+pistas que monumentos, dice que no queda nada nuevo antes que repetir una— y se pasó de 2
+pistas por ciudad a **6**, que son **72 en total**.
 
-Las terceras buscan un ángulo distinto de las dos que ya había: si las anteriores tiran de
-monumento y de paisaje, estas tiran de lengua, comida o costumbre — el euskera y el puente
-colgante de Bilbao, las Fallas de Valencia, el mazapán de Toledo, el Botafumeiro de
-Santiago, el carnaval de Cádiz.
+Se subió a seis y no a tres por un segundo motivo: con tres justas se veían las tres en
+cada partida y se aprendían de memoria. Con seis, cada partida enseña tres al azar —
+**20 combinaciones por ciudad**— y dejan de salir siempre las mismas.
+
+Cada pista busca un ángulo distinto de las demás, para que la segunda y la tercera aporten
+información nueva en vez de repetir la primera con otras palabras: dirección y monumento,
+paisaje, lengua o comida, un detalle que se pueda ver, un dato de historia, y algo de
+geografía o de vida cotidiana. El euskera y el campo llamado La Catedral en Bilbao, el
+cauce desviado del Turia en Valencia, las cadenas de cautivos de Toledo, el Botafumeiro de
+Santiago, la Constitución de 1812 en Cádiz, el tren de Riotinto en Huelva.
 
 Comprobado con 100 partidas resolviendo los tres monumentos de cada ciudad: **400 ciudades
-revisadas, ninguna pista repetida**. El validador exige ahora que cada ciudad tenga al
-menos tantas pistas distintas como monumentos se investigan.
+revisadas, ninguna pista repetida**. Y con 150 partidas más para medir la variedad: los 7
+destinos observados llegaron a mostrar **sus 6 pistas distintas**. El validador exige que
+cada ciudad tenga al menos tantas pistas distintas como monumentos se investigan.
 
 ### Se puede añadir al móvil como una app
 

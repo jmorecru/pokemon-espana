@@ -16,5 +16,5 @@
 // Si el numero de pantalla no coincide con el que se acaba de publicar, es que
 // el movil sigue con el index.html viejo: ahi el cache esta en el propio HTML.
 
-const VERSION = "8.1";
+const VERSION = "8.2";
 const VERSION_FECHA = "2026-09-08";

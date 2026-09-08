@@ -51,7 +51,8 @@ suelta la pista, así que hay que volver a investigarlo y pagar otras 3 horas.
   En cada partida se sortean 3 monumentos por ciudad y una pregunta por monumento, y las
   opciones se barajan, así que no se repite ni se aprende de memoria.
 - **Pistas geográficas**: cada acierto revela una pista sobre la siguiente ciudad de la
-  ruta, no su nombre.
+  ruta, nunca su nombre. Hay **6 por ciudad** y en cada partida se sortean 3, así que no
+  se aprenden de memoria y ninguna se repite dentro de la misma ciudad.
 - **Al fallar se aprende**: el juego dice cuál era la respuesta correcta y, cuando la
   pregunta lo necesita, explica por qué.
 - **Pokédex**: un Pokémon distinto en cada monumento, y el legendario en la ciudad final.
@@ -77,7 +78,7 @@ la pantalla de victoria si la ruta pasó por allí.
   | Archivo | Qué hay dentro |
   | --- | --- |
   | `data/ciudades.js` | Las 13 ciudades, sus 78 monumentos y las 390 preguntas |
-  | `data/pistas.js` | Las pistas de cada ciudad |
+  | `data/pistas.js` | Las 72 pistas, 6 por cada ciudad de destino |
   | `data/repaso.js` | El temario del colegio, por curso y tema |
   | `data/pokemon.js` | Los legendarios y el catálogo de Pokémon |
   | `js/musica.js` | La afinación, las tres melodías y el sintetizador |

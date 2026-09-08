@@ -18,66 +18,66 @@ const CITY_POOL = {
         name:"Parque del Retiro",
         img:"images/madrid/retiro.jpg",
         questions:[
-          { q:"¿Qué gran monumento preside el estanque del Retiro donde la gente monta en barca?", opts:["El monumento a Alfonso XII","La estatua de Colón","La Torre de Madrid"], ans:0 },
-          { q:"¿Qué actividad típica hacen muchas personas en el gran estanque del Retiro?", opts:["Montar en barca","Esquiar","Bucear"], ans:0 },
-          { q:"¿Cómo se llama el famoso parque histórico de Madrid donde está este estanque?", opts:["El Retiro","La Casa de Campo","El Capricho"], ans:0 },
-          { q:"¿Qué estación es especialmente famosa en Madrid por sus flores y el Retiro cercano?", opts:["La primavera","El invierno polar","La época de monzones"], ans:0 },
-          { q:"¿En qué ciudad española se encuentra el Parque del Retiro?", opts:["Madrid","Sevilla","Valencia"], ans:0 }
+          { q:"¿Qué gran monumento preside el estanque del Retiro donde la gente monta en barca?", opts:["El monumento a Alfonso XII","La estatua de Colón","La Torre de Madrid"], ans:0, exp:"Es una gran columnata con el rey a caballo, levantada frente al estanque a principios del siglo XX." },
+          { q:"¿Qué actividad típica hacen muchas personas en el gran estanque del Retiro?", opts:["Montar en barca","Esquiar","Bucear"], ans:0, exp:"El estanque se hizo en el siglo XVII para el recreo de los reyes, y hoy cualquiera puede alquilar una barca de remos." },
+          { q:"¿Cómo se llama el famoso parque histórico de Madrid donde está este estanque?", opts:["El Retiro","La Casa de Campo","El Capricho"], ans:0, exp:"Se llama así porque era el buen retiro de los reyes: su finca de descanso hasta que en 1868 se abrió al pueblo." },
+          { q:"¿Qué estación es especialmente famosa en Madrid por sus flores y el Retiro cercano?", opts:["La primavera","El invierno polar","La época de monzones"], ans:0, exp:"En primavera florecen la rosaleda y los castaños de indias, y es cuando el parque se llena de gente." },
+          { q:"¿En qué ciudad española se encuentra el Parque del Retiro?", opts:["Madrid","Sevilla","Valencia"], ans:0, exp:"Está en el centro de Madrid y es Patrimonio de la Humanidad desde 2021, junto al Paseo del Prado." }
         ]
       },
       {
         name:"Museo del Prado",
         img:"images/madrid/prado.jpg",
         questions:[
-          { q:"¿Cuál de estos pintores españoles tiene una estatua en la puerta del Museo del Prado?", opts:["Diego Velázquez","Pablo Picasso","Salvador Dalí"], ans:0 },
-          { q:"¿Qué tipo de museo es el Prado principalmente?", opts:["Museo de arte y pintura","Museo de dinosaurios","Museo del ferrocarril"], ans:0 },
-          { q:"¿En qué ciudad está el Museo del Prado?", opts:["Madrid","Bilbao","Barcelona"], ans:0 },
-          { q:"¿Qué famoso pintor español está muy relacionado con obras del Prado como Las Meninas?", opts:["Velázquez","Miró","Sorolla"], ans:0 },
-          { q:"¿Cómo se conoce el gran paseo cultural de Madrid donde están Prado, Reina Sofía y Thyssen?", opts:["Paseo del Arte","Camino de Santiago","Ruta de la Plata"], ans:0 }
+          { q:"¿Cuál de estos pintores españoles tiene una estatua en la puerta del Museo del Prado?", opts:["Diego Velázquez","Pablo Picasso","Salvador Dalí"], ans:0, exp:"Su estatua de bronce recibe a los visitantes en la Puerta de Velázquez, la entrada principal del museo." },
+          { q:"¿Qué tipo de museo es el Prado principalmente?", opts:["Museo de arte y pintura","Museo de dinosaurios","Museo del ferrocarril"], ans:0, exp:"Guarda unos 8.000 cuadros, casi todos de pintura europea, aunque solo puede exponer una parte cada vez." },
+          { q:"¿En qué ciudad está el Museo del Prado?", opts:["Madrid","Bilbao","Barcelona"], ans:0, exp:"Abrió en 1819 con los cuadros que los reyes de España habían ido reuniendo durante siglos." },
+          { q:"¿Qué famoso pintor español está muy relacionado con obras del Prado como Las Meninas?", opts:["Velázquez","Miró","Sorolla"], ans:0, exp:"Las Meninas es el cuadro más famoso del museo, y Velázquez se pintó a sí mismo dentro, trabajando." },
+          { q:"¿Cómo se conoce el gran paseo cultural de Madrid donde están Prado, Reina Sofía y Thyssen?", opts:["Paseo del Arte","Camino de Santiago","Ruta de la Plata"], ans:0, exp:"En poco más de un kilómetro se juntan tres grandes museos: el Prado, el Reina Sofía y el Thyssen." }
         ]
       },
       {
         name:"Palacio Real",
         img:"images/madrid/palacio-real.jpg",
         questions:[
-          { q:"¿Qué inmensa plaza se encuentra justo entre el Palacio Real y la Catedral de la Almudena?", opts:["La Plaza de la Armería","La Plaza de España","La Plaza de Neptuno"], ans:0 },
-          { q:"¿Qué edificio histórico se encuentra junto al Palacio Real de Madrid?", opts:["La Catedral de la Almudena","La Sagrada Família","La Giralda"], ans:0 },
-          { q:"¿En qué ciudad se encuentra el Palacio Real de España?", opts:["Madrid","Toledo","Granada"], ans:0 },
-          { q:"¿Para qué se usa hoy principalmente el Palacio Real?", opts:["Actos oficiales y ceremonias","Como aeropuerto","Como estadio de fútbol"], ans:0 },
-          { q:"¿Qué familia real está asociada al Palacio Real de Madrid?", opts:["La familia real española","La familia imperial romana","La familia Tudor"], ans:0 }
+          { q:"¿Qué inmensa plaza se encuentra justo entre el Palacio Real y la Catedral de la Almudena?", opts:["La Plaza de la Armería","La Plaza de España","La Plaza de Neptuno"], ans:0, exp:"Se llama así porque a un lado está la Real Armería, donde se guardan las armaduras de los reyes." },
+          { q:"¿Qué edificio histórico se encuentra junto al Palacio Real de Madrid?", opts:["La Catedral de la Almudena","La Sagrada Família","La Giralda"], ans:0, exp:"La catedral se terminó en 1993, más de cien años después de empezarla, y la consagró el papa Juan Pablo II." },
+          { q:"¿En qué ciudad se encuentra el Palacio Real de España?", opts:["Madrid","Toledo","Granada"], ans:0, exp:"Con más de 3.000 habitaciones es el palacio real más grande de toda Europa occidental." },
+          { q:"¿Para qué se usa hoy principalmente el Palacio Real?", opts:["Actos oficiales y ceremonias","Como aeropuerto","Como estadio de fútbol"], ans:0, exp:"Los reyes no viven aquí: viven en el palacio de la Zarzuela y usan este para recibir a otros países." },
+          { q:"¿Qué familia real está asociada al Palacio Real de Madrid?", opts:["La familia real española","La familia imperial romana","La familia Tudor"], ans:0, exp:"Lo mandó construir Felipe V después de que el viejo alcázar se quemara la Nochebuena de 1734." }
         ]
       },
       {
         name:"Gran Vía",
         img:"images/madrid/gran-via.jpg",
         questions:[
-          { q:"¿Qué famoso edificio coronado con una estatua alada destaca en el inicio de la Gran Vía?", opts:["El Edificio Metrópolis","El Edificio Carrión","La Torre de Madrid"], ans:0 },
-          { q:"¿Cómo se conoce popularmente la Gran Vía de Madrid?", opts:["Como una gran avenida de teatros, cines y tiendas","Como un puerto marítimo","Como una muralla romana"], ans:0 },
-          { q:"¿En qué ciudad está la Gran Vía más famosa de España?", opts:["Madrid","Bilbao","Girona"], ans:0 },
-          { q:"¿Qué tipo de ocio es muy típico de la Gran Vía?", opts:["Musicales y teatros","Carreras de barcos","Esquí alpino"], ans:0 },
-          { q:"¿Qué edificio de la Gran Vía es famoso por su cartel luminoso de Schweppes?", opts:["El Edificio Carrión","La Torre Picasso","La Puerta de Alcalá"], ans:0 }
+          { q:"¿Qué famoso edificio coronado con una estatua alada destaca en el inicio de la Gran Vía?", opts:["El Edificio Metrópolis","El Edificio Carrión","La Torre de Madrid"], ans:0, exp:"La figura dorada de su cúpula es una Victoria con alas, colocada en 1975 en lugar de un ave fénix." },
+          { q:"¿Cómo se conoce popularmente la Gran Vía de Madrid?", opts:["Como una gran avenida de teatros, cines y tiendas","Como un puerto marítimo","Como una muralla romana"], ans:0, exp:"Se abrió en 1910 derribando calles enteras del centro para unir un lado de Madrid con el otro." },
+          { q:"¿En qué ciudad está la Gran Vía más famosa de España?", opts:["Madrid","Bilbao","Girona"], ans:0, exp:"Mide poco más de un kilómetro y es una de las calles por las que pasa más gente de toda España." },
+          { q:"¿Qué tipo de ocio es muy típico de la Gran Vía?", opts:["Musicales y teatros","Carreras de barcos","Esquí alpino"], ans:0, exp:"Tiene tantos teatros de musicales que se la llama el Broadway madrileño." },
+          { q:"¿Qué edificio de la Gran Vía es famoso por su cartel luminoso de Schweppes?", opts:["El Edificio Carrión","La Torre Picasso","La Puerta de Alcalá"], ans:0, exp:"También se le llama Edificio Capitol, y su cartel luminoso lleva anunciando lo mismo desde 1972." }
         ]
       },
       {
         name:"Estadio Santiago Bernabéu",
         img:"images/madrid/bernabeu.jpg",
         questions:[
-          { q:"¿Qué gran competición europea de fútbol ha ganado el Real Madrid muchas veces en este estadio?", opts:["La UEFA Champions League","La Copa del Mundo","La Liga de Kanto"], ans:0 },
-          { q:"¿Qué equipo juega habitualmente en el Santiago Bernabéu?", opts:["Real Madrid","Atlético de Madrid","FC Barcelona"], ans:0 },
-          { q:"¿En qué ciudad está el estadio Santiago Bernabéu?", opts:["Madrid","Sevilla","Londres"], ans:0 },
-          { q:"¿Qué deporte se juega principalmente en el Bernabéu?", opts:["Fútbol","Baloncesto","Tenis"], ans:0 },
-          { q:"¿De qué color viste tradicionalmente el Real Madrid?", opts:["Blanco","Rojo y azul","Verde"], ans:0 }
+          { q:"¿Qué gran competición europea de fútbol ha ganado el Real Madrid muchas veces en este estadio?", opts:["La UEFA Champions League","La Copa del Mundo","La Liga de Kanto"], ans:0, exp:"El Real Madrid es el equipo que más veces la ha ganado en toda la historia del torneo." },
+          { q:"¿Qué equipo juega habitualmente en el Santiago Bernabéu?", opts:["Real Madrid","Atlético de Madrid","FC Barcelona"], ans:0, exp:"Juega aquí desde 1947, y el estadio lleva el nombre del presidente que se empeñó en levantarlo." },
+          { q:"¿En qué ciudad está el estadio Santiago Bernabéu?", opts:["Madrid","Sevilla","Londres"], ans:0, exp:"Está en pleno paseo de la Castellana y caben unos 80.000 espectadores." },
+          { q:"¿Qué deporte se juega principalmente en el Bernabéu?", opts:["Fútbol","Baloncesto","Tenis"], ans:0, exp:"Además de fútbol se usa para conciertos y para los partidos de la selección española." },
+          { q:"¿De qué color viste tradicionalmente el Real Madrid?", opts:["Blanco","Rojo y azul","Verde"], ans:0, exp:"Por vestir de blanco, a sus jugadores se les llama los blancos o los merengues." }
         ]
       },
       {
         name:"Puerta del Sol",
         img:"images/madrid/puerta-del-sol.jpg",
         questions:[
-          { q:"¿Qué estatua de bronce, símbolo de Madrid, se encuentra en mitad de la Puerta del Sol?", opts:["El Oso y el Madroño","El León del Congreso","La Cibeles"], ans:0 },
-          { q:"¿Qué famosa tradición española se sigue frente al reloj de Sol cada Nochevieja?", opts:["Tomar las doce uvas","Lanzar flores al aire","Encender faroles"], ans:0 },
-          { q:"¿En qué ciudad se encuentra la Puerta del Sol?", opts:["Madrid","Toledo","Valencia"], ans:0 },
-          { q:"¿Qué famoso punto de referencia de las carreteras españolas está en la Puerta del Sol?", opts:["El Kilómetro Cero","La Rosa de los Vientos","El Meridiano Real"], ans:0 },
-          { q:"¿Qué fruta se asocia mucho a Madrid por la estatua del oso?", opts:["Madroño","Naranja","Uva"], ans:0 }
+          { q:"¿Qué estatua de bronce, símbolo de Madrid, se encuentra en mitad de la Puerta del Sol?", opts:["El Oso y el Madroño","El León del Congreso","La Cibeles"], ans:0, exp:"Es el escudo de Madrid convertido en estatua: un oso comiéndose los frutos de un madroño." },
+          { q:"¿Qué famosa tradición española se sigue frente al reloj de Sol cada Nochevieja?", opts:["Tomar las doce uvas","Lanzar flores al aire","Encender faroles"], ans:0, exp:"La costumbre de comer una uva por cada campanada empezó a principios del siglo XX." },
+          { q:"¿En qué ciudad se encuentra la Puerta del Sol?", opts:["Madrid","Toledo","Valencia"], ans:0, exp:"Es la plaza más céntrica de Madrid y en ella confluyen algunas de las calles más importantes." },
+          { q:"¿Qué famoso punto de referencia de las carreteras españolas está en la Puerta del Sol?", opts:["El Kilómetro Cero","La Rosa de los Vientos","El Meridiano Real"], ans:0, exp:"Una placa en el suelo marca el punto donde empiezan a contarse las seis carreteras radiales de España." },
+          { q:"¿Qué fruta se asocia mucho a Madrid por la estatua del oso?", opts:["Madroño","Naranja","Uva"], ans:0, exp:"El madroño da unas bolitas rojas que se pueden comer, y sale en el escudo de la ciudad junto al oso." }
         ]
       }
     ]

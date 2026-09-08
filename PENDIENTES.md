@@ -36,11 +36,17 @@ Decisiones ya tomadas, por si hay que retomarlo:
 El mecanismo **ya está hecho**: al fallar, el juego dice cuál era la respuesta correcta y,
 si la pregunta trae explicación, la muestra con una bombilla. Falta el texto.
 
-- [ ] **Escribir la explicación de las 330 preguntas de las once ciudades originales.**
-      Las 60 de Cádiz y Huelva ya la tienen y sirven de ejemplo del tono: una frase, en
-      lenguaje de niño, que dé el dato y el porqué. El campo es `exp` dentro de cada
-      pregunta del `CITY_POOL`, y es opcional: sin él el juego solo dice cuál era la
-      correcta, que ya es bastante.
+- [ ] **Escribir la explicación de las 300 preguntas que aún no la tienen.** Van 90 de
+      390 (23%): las 60 de Cádiz y Huelva más las 30 de Madrid. El campo es `exp` dentro
+      de cada pregunta de `data/ciudades.js`, y es opcional: sin él el juego solo dice cuál
+      era la correcta, que ya es bastante.
+
+      El tono, ya fijado en las 90 escritas: **una sola frase**, en lenguaje de niño, que
+      dé el dato y el porqué, y que enseñe algo que la pregunta no decía. Se escriben con
+      sus acentos —las lee un niño— y sin comillas dobles, que romperían la cadena.
+
+      Quedan por hacer, por ciudades: Bilbao, Sevilla, Barcelona, Girona, Granada,
+      Valencia, Toledo, Santiago de Compostela, Salamanca y Londres, 30 cada una.
 
 - [ ] **Decidir si la explicación se muestra también al acertar.** Ahora solo sale al
       fallar. Para un juego de repaso quizá interese reforzar también el acierto, pero la

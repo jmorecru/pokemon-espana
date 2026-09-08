@@ -1,6 +1,6 @@
 # Temas pendientes
 
-Última revisión: **7 de septiembre de 2026**. Versión publicada: **8.0**.
+Última revisión: **8 de septiembre de 2026**. Versión publicada: **8.1**.
 
 > **Al desplegar, subir la versión.** Hay que tocar dos sitios y es adrede: `VERSION` y
 > `VERSION_FECHA` en [js/version.js](js/version.js), que es lo que se ve en pantalla, y el
@@ -133,6 +133,25 @@ Se cargan como **scripts clásicos**, no como módulos ES, a propósito: el nave
 `<script src>` relativo desde `file://` pero **no** acepta módulos ni `fetch`. Así se
 sigue pudiendo abrir el juego con doble clic, que es como se juega en casa. Verificado
 lanzando el banco de pruebas por `file://`, no por servidor.
+
+### Las pistas de una ciudad ya no se repiten
+
+Había **2 pistas por ciudad** pero se pueden investigar **3 monumentos**, así que la
+tercera repetía siempre: agotadas las disponibles, `getHintForCurrentCity()` volvía a
+sortear entre todas. Detectado jugando.
+
+Arreglado por los dos lados: se ha escrito **una tercera pista para cada una de las 12
+ciudades**, justo una por monumento, y el código ya no repite nunca — si alguna vez
+hubiera menos pistas que monumentos, dice que no queda nada nuevo antes que repetir.
+
+Las terceras buscan un ángulo distinto de las dos que ya había: si las anteriores tiran de
+monumento y de paisaje, estas tiran de lengua, comida o costumbre — el euskera y el puente
+colgante de Bilbao, las Fallas de Valencia, el mazapán de Toledo, el Botafumeiro de
+Santiago, el carnaval de Cádiz.
+
+Comprobado con 100 partidas resolviendo los tres monumentos de cada ciudad: **400 ciudades
+revisadas, ninguna pista repetida**. El validador exige ahora que cada ciudad tenga al
+menos tantas pistas distintas como monumentos se investigan.
 
 ### Se puede añadir al móvil como una app
 

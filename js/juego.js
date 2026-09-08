@@ -203,8 +203,16 @@ function getHintForCurrentCity() {
     return used.indexOf(clue) === -1;
   });
 
-  const source = available.length > 0 ? available : clues;
-  const chosen = source[Math.floor(Math.random() * source.length)];
+  // Nunca se repite una pista en la misma ciudad. Antes, agotadas las
+  // disponibles, se volvia a sortear entre todas, y como habia dos pistas por
+  // ciudad y tres monumentos que investigar, la tercera repetia siempre. Ahora
+  // hay tres pistas por ciudad, justo una por monumento; si alguna vez hubiera
+  // menos, se dice que no queda nada nuevo antes que repetir.
+  if (!available.length) {
+    return "Rebuscáis por todas partes, pero el rastro no dice nada nuevo: la pista que ya teníais es todo lo que hay aquí.";
+  }
+
+  const chosen = available[Math.floor(Math.random() * available.length)];
   used.push(chosen);
   return chosen;
 }

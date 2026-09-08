@@ -2,7 +2,11 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<!-- Sin maximum-scale ni user-scalable: no hay ni un campo de texto en todo el
+     juego, asi que bloquear el zoom no evitaba nada y estorbaba a quien
+     necesita agrandar la letra. -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3CclipPath id='c'%3E%3Ccircle cx='16' cy='16' r='15'/%3E%3C/clipPath%3E%3C/defs%3E%3Cg clip-path='url(%23c)'%3E%3Crect width='32' height='16' fill='%23cc0000'/%3E%3Crect y='16' width='32' height='16' fill='%23fff'/%3E%3Crect y='14' width='32' height='4' fill='%230a285f'/%3E%3C/g%3E%3Ccircle cx='16' cy='16' r='15' fill='none' stroke='%230a285f' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='5.5' fill='%23fff' stroke='%230a285f' stroke-width='2'/%3E%3C/svg%3E">
 <title>Pokémon España: En Busca del Legendario v7.3</title>
 <style>
 :root{
@@ -646,6 +650,40 @@ const CHIPTUNE = {
   }
 };
 
+// El iPhone silencia un AudioContext "pelado" cuando el interruptor lateral
+// esta en silencio: iOS manda ese sonido por la via del timbre, no por la de la
+// musica. En cuanto hay un <audio> de verdad reproduciendose, iOS cambia a la
+// via de la musica y entonces la Web Audio se oye igual que un video.
+//
+// Asi que se mantiene sonando un WAV mudo en bucle mientras haya musica. Son
+// 0,05 s de silencio en 8 bits a 8 kHz: 444 bytes, no se nota en nada. No se
+// puede bajar el volumen a cero por codigo (iOS no deja tocar el volumen de un
+// elemento de audio), pero da igual: el fichero ya es silencio.
+const SILENCIO_WAV = "data:audio/wav;base64,UklGRrQBAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YZABAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA";
+
+let promotorSesion = null;
+
+// Hay que llamarla desde un gesto real del usuario (el boton de musica).
+function promoverSesionAudio() {
+  if (!promotorSesion) {
+    promotorSesion = document.createElement("audio");
+    promotorSesion.src = SILENCIO_WAV;
+    promotorSesion.loop = true;
+    // Sin playsinline, iOS puede querer abrirlo a pantalla completa.
+    promotorSesion.setAttribute("playsinline", "");
+    promotorSesion.setAttribute("webkit-playsinline", "");
+  }
+  const p = promotorSesion.play();
+  if (p && p.catch) p.catch(function(){ /* si no deja, se oira solo con el timbre activo */ });
+}
+
+function pararPromotorSesion() {
+  if (promotorSesion) {
+    promotorSesion.pause();
+    try { promotorSesion.currentTime = 0; } catch (e) { /* da igual */ }
+  }
+}
+
 let audioCtx = null;
 let masterGain = null;
 let noiseBuffer = null;
@@ -666,10 +704,21 @@ function ensureAudioCtx() {
     masterGain.connect(audioCtx.destination);
   }
   // El navegador arranca el contexto en suspenso hasta que hay un gesto del
-  // usuario; se llama siempre desde el boton de musica, asi que aqui ya vale.
-  if (audioCtx.state === "suspended") audioCtx.resume();
+  // usuario. Ojo: iOS tiene un estado propio, "interrupted", en el que cae al
+  // bloquear el telefono o al entrar una llamada, asi que no vale comprobar
+  // solo "suspended".
+  if (audioCtx.state !== "running") audioCtx.resume();
   return audioCtx;
 }
+
+// Al volver a la pestana el contexto puede haberse quedado suspendido —en iOS
+// pasa cada vez que se bloquea el telefono— y la musica moriria en silencio.
+document.addEventListener("visibilitychange", function(){
+  if (document.visibilityState !== "visible") return;
+  if (!state.musicEnabled || !audioCtx) return;
+  if (audioCtx.state !== "running") audioCtx.resume();
+  promoverSesionAudio();
+});
 
 function trackVoice(node) {
   activeVoices.push(node);
@@ -2023,38 +2072,56 @@ function updateRouteBar() {
   });
 }
 
+// Cuantos Pokemon quedan de verdad por encontrar en esta ruta: uno por cada
+// monumento sin resolver, y en la ciudad final solo el legendario, porque basta
+// resolver un sitio para acabar la partida.
+function pokemonPorDescubrir() {
+  if (!state.secretRoute.length) return 6;
+  let quedan = 0;
+  state.secretRoute.forEach(function(c, i){
+    const sitios = state.activePlaces[c] || [];
+    const hechos = state.donePlaces[c] ? state.donePlaces[c].size : 0;
+    if (i === state.secretRoute.length - 1) {
+      quedan += hechos > 0 ? 0 : 1;
+    } else {
+      quedan += Math.max(0, sitios.length - hechos);
+    }
+  });
+  return quedan;
+}
+
 function updatePokedex() {
   const dex = document.getElementById("pdx");
   dex.innerHTML = "";
 
-  const seen = new Set(state.discovered);
-  const fallback = RANDOM_POKEMON_POOL.map(function(p){ return p.name; }).filter(function(name){
-    return !seen.has(name);
-  }).slice(0, 6);
-
-  const toShow = state.discovered.concat(fallback);
-  const shown = new Set();
-
-  toShow.forEach(function(name){
-    if (shown.has(name)) return;
-    shown.add(name);
-
+  state.discovered.forEach(function(name){
     const s = document.createElement("div");
-    const found = state.discovered.indexOf(name) !== -1;
-    s.className = "pslot" + (found ? " found" : "");
-    s.textContent = found ? ("🔴 " + name) : "❓ ???";
+    s.className = "pslot found";
+    s.textContent = "🔴 " + name;
     dex.appendChild(s);
   });
 
-  if (!dex.children.length) {
-    for (let i = 0; i < 6; i++) {
-      const s = document.createElement("div");
-      s.className = "pslot";
-      s.textContent = "❓ ???";
-      dex.appendChild(s);
-    }
+  // Antes los huecos se rellenaban con los primeros Pokemon del catalogo que
+  // no se hubieran visto, asi que siempre salian seis y parecia que faltaban
+  // seis concretos. Ahora hay tantos huecos como Pokemon queden de verdad.
+  const quedan = pokemonPorDescubrir();
+  for (let i = 0; i < quedan; i++) {
+    const s = document.createElement("div");
+    s.className = "pslot";
+    s.textContent = "❓ ???";
+    dex.appendChild(s);
   }
 }
+
+// Los sprites son lo unico que el juego pide por red. Si no llegan, en vez de
+// dejar un hueco roto justo donde va el Pokemon se pone una Poke Ball dibujada
+// aqui mismo. Se cuelga de window porque la llama un onerror del HTML.
+const SPRITE_RESERVA = "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Ccircle%20cx='50'%20cy='50'%20r='46'%20fill='%23fff'%20stroke='%230A285F'%20stroke-width='5'/%3E%3Cpath%20d='M4%2050a46%2046%200%200%201%2092%200z'%20fill='%23CC0000'/%3E%3Crect%20x='4'%20y='45'%20width='92'%20height='10'%20fill='%230A285F'/%3E%3Ccircle%20cx='50'%20cy='50'%20r='16'%20fill='%23fff'%20stroke='%230A285F'%20stroke-width='5'/%3E%3Ccircle%20cx='50'%20cy='50'%20r='7'%20fill='%23FFDE00'%20stroke='%230A285F'%20stroke-width='3'/%3E%3C/svg%3E";
+
+window.spriteDeReserva = function(img) {
+  img.onerror = null;
+  img.src = SPRITE_RESERVA;
+};
 
 function getCityImage(cityKey) {
   const city = CITY_POOL[cityKey];
@@ -2247,7 +2314,7 @@ function openPlace(i) {
   html += buildSceneHtml(
     pl.name,
     placeImage,
-    '<img class="poke-img" src="' + pokeUrl + '" alt="' + pokeName + '">' +
+    '<img class="poke-img" src="' + pokeUrl + '" alt="' + pokeName + '" onerror="spriteDeReserva(this)">' +
     '<div class="poke-badge">⚡ ' + pokeName + '</div>'
   );
   html += '<div class="stext">¡En el monumento <strong>' + pl.name + '</strong> divisáis movimiento!<br>¡Ha aparecido un <strong>' + pokeName + '</strong> salvaje! Demostrad vuestra sabiduría:</div>';
@@ -2611,7 +2678,9 @@ function toggleMusic() {
 
   if (!state.musicEnabled) {
     // El navegador solo deja crear el contexto de audio a partir de un gesto
-    // del usuario, y pulsar este boton lo es.
+    // del usuario, y pulsar este boton lo es. Las dos llamadas tienen que
+    // salir de aqui: el promotor de sesion solo cuenta si arranca en el gesto.
+    promoverSesionAudio();
     if (!ensureAudioCtx()) {
       btn.textContent = "⚠️ Sin audio";
       return;
@@ -2624,6 +2693,7 @@ function toggleMusic() {
   } else {
     state.musicEnabled = false;
     stopMusic();
+    pararPromotorSesion();
     btn.textContent = "🔇 Música OFF";
   }
 }

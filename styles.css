@@ -1,0 +1,377 @@
+:root{
+  --blue:#3B4CCA;
+  --yellow:#FFDE00;
+  --dark:#0A285F;
+  --red:#CC0000;
+  --green:#2d8a4e;
+}
+html,body{
+  width:100%;
+  min-height:100%;
+  margin:0;
+  padding:0;
+}
+*{box-sizing:border-box}
+body{
+  font-family:Arial, Helvetica, sans-serif;
+  background:linear-gradient(135deg,#1a237e,#0a285f 50%,#1565c0);
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  padding:10px 8px 30px;
+}
+#gc{
+  width:100%;
+  max-width:560px;
+  background:#fff;
+  border-radius:20px;
+  box-shadow:0 8px 32px rgba(10,40,95,.2),0 0 0 4px var(--yellow);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+header{
+  background:linear-gradient(135deg,var(--blue),var(--dark));
+  color:#fff;
+  padding:14px 15px 10px;
+  text-align:center;
+  border-bottom:4px solid var(--yellow);
+}
+header h1{
+  margin:0;
+  font-size:1rem;
+  color:var(--yellow);
+  line-height:1.5;
+}
+header p{
+  margin:6px 0 0;
+  font-size:.8rem;
+  font-weight:700;
+  opacity:.9;
+}
+#sb{
+  background:var(--dark);
+  color:#fff;
+  padding:7px 12px;
+  font-size:.82rem;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-weight:800;
+}
+#cb{
+  background:var(--red);
+  padding:3px 10px;
+  border-radius:12px;
+  font-size:.72rem;
+  font-weight:900;
+  max-width:230px;
+  text-align:right;
+  line-height:1.3;
+}
+#top-actions{
+  background:#10245f;
+  padding:8px 12px;
+  display:flex;
+  gap:8px;
+  justify-content:flex-end;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.ctrl-btn{
+  border:none;
+  border-radius:10px;
+  padding:8px 10px;
+  font-size:.78rem;
+  font-weight:900;
+  background:#ffffff;
+  color:#0A285F;
+}
+#rp{
+  background:#1a237e;
+  padding:6px 12px;
+  display:none;
+  align-items:center;
+  gap:5px;
+  overflow-x:auto;
+}
+.rdot{
+  width:24px;height:24px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.25);
+  background:rgba(255,255,255,.08);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.62rem;color:#fff;font-weight:900;flex-shrink:0;
+}
+.rdot.visited{background:var(--yellow);border-color:var(--yellow);color:#000}
+.rdot.current{background:var(--green);border-color:#52d68a;color:#fff}
+.rdot.unknown{background:rgba(255,255,255,.12);color:rgba(255,255,255,.4);border-color:rgba(255,255,255,.15)}
+.rarr{color:rgba(255,255,255,.25);font-size:.65rem;flex-shrink:0}
+
+#screen{
+  padding:14px;
+  flex-grow:1;
+  min-height:260px;
+  display:flex;
+  flex-direction:column;
+}
+.scene{
+  position:relative;
+  width:100%;
+  height:195px;
+  border-radius:13px;
+  overflow:hidden;
+  margin-bottom:11px;
+  background:linear-gradient(180deg,#9bd2ff 0%, #dff3ff 55%, #90c76f 56%, #7bb45b 100%);
+  flex-shrink:0;
+  border:2px solid #d8e6f2;
+}
+.scene-bg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  z-index:0;
+}
+.scene-pattern{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  background:
+    linear-gradient(to top, rgba(0,0,0,.52), transparent 45%),
+    radial-gradient(circle at 85% 20%, rgba(255,221,87,.45) 0 28px, transparent 29px),
+    linear-gradient(to top, transparent 0 58%, rgba(255,255,255,.14) 58% 60%, transparent 60%);
+}
+.scene-label{
+  position:absolute;
+  left:10px;
+  bottom:8px;
+  color:#fff;
+  font-size:.82rem;
+  font-weight:900;
+  text-shadow:1px 1px 4px rgba(0,0,0,.95);
+  z-index:3;
+}
+.poke-img{
+  position:absolute;
+  bottom:8px;
+  left:50%;
+  transform:translateX(-50%);
+  height:120px;
+  width:auto;
+  filter:drop-shadow(0 6px 16px rgba(0,0,0,.85));
+  z-index:3;
+}
+.poke-badge{
+  position:absolute;
+  top:8px;
+  right:8px;
+  background:rgba(0,0,0,.75);
+  color:var(--yellow);
+  font-size:.65rem;
+  font-weight:900;
+  padding:4px 8px;
+  border-radius:8px;
+  border:1px solid var(--yellow);
+  z-index:3;
+}
+.stext{
+  font-size:.98rem;
+  line-height:1.55;
+  margin-bottom:11px;
+  background:#f0f6ff;
+  padding:11px 13px;
+  border-left:5px solid var(--blue);
+  border-radius:6px;
+  font-weight:700;
+}
+.hbox{
+  background:#fff9db;
+  border:2px dashed #f59f00;
+  padding:9px 12px;
+  border-radius:8px;
+  margin-bottom:10px;
+  font-style:italic;
+  font-size:.88rem;
+  font-weight:700;
+  color:#7c5a00;
+}
+.wbox{
+  background:#fff0f0;
+  border:2px dashed var(--red);
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:10px;
+  text-align:center;
+}
+.opts{display:grid;grid-template-columns:1fr;gap:8px;margin-top:8px}
+.tgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:7px}
+button{
+  background:#fff;
+  border:2.5px solid var(--blue);
+  border-radius:11px;
+  padding:11px 13px;
+  font-size:.94rem;
+  font-weight:800;
+  font-family:Arial, Helvetica, sans-serif;
+  color:var(--dark);
+  display:flex;
+  align-items:center;
+  gap:7px;
+  cursor:pointer;
+  /* Los botones vienen centrados de fabrica. Con una sola linea no se nota,
+     porque la caja del texto se ajusta al contenido y queda pegada a la
+     izquierda, pero en cuanto el nombre pasa a dos lineas la caja ocupa todo
+     el ancho y el texto se centra, descuadrado respecto a los de al lado.
+     Los botones que si van centrados (.sbtn) lo piden expresamente. */
+  text-align:left;
+}
+button:active{transform:scale(.98)}
+.abtn{background:var(--yellow);border-color:var(--dark);color:var(--dark)}
+.tbtn{background:#f1f5f9;border-color:#94a3b8;color:#334155;font-size:.88rem;padding:9px 12px}
+.lbtn{background:#1a1a2e;border-color:#cc2244;color:#fff}
+.sbtn{
+  background:linear-gradient(135deg,var(--blue),var(--dark));
+  color:var(--yellow);
+  border:none;
+  font-size:.8rem;
+  padding:16px;
+  border-radius:13px;
+  margin-top:10px;
+  text-align:center;
+  justify-content:center;
+  width:100%;
+}
+.slbl{font-weight:900;font-size:.82rem;color:#4a5568;margin:12px 0 5px;display:block}
+.tcard{
+  background:linear-gradient(135deg,#fff9db,#fffde7);
+  border:3px solid var(--yellow);
+  border-radius:13px;
+  padding:13px;
+  margin:8px 0;
+  font-size:.9rem;
+  font-weight:700;
+  line-height:1.55;
+}
+.tcard.dark{
+  background:linear-gradient(135deg,#1a1a2e,#2a2a4e);
+  color:#fff;
+  border-color:#cc2244;
+}
+#pdx-c{
+  background:#edf2f7;
+  padding:9px 12px;
+  border-top:2px solid #e2e8f0;
+}
+.pdx-t{
+  font-size:.65rem;
+  font-weight:900;
+  color:#4a5568;
+  margin-bottom:5px;
+  text-transform:uppercase;
+  letter-spacing:.8px;
+}
+#pdx{
+  display:flex;
+  gap:6px;
+  overflow-x:auto;
+  padding-bottom:3px;
+  min-height:36px;
+}
+.pslot{
+  background:#fff;
+  border:2px solid #cbd5e1;
+  border-radius:7px;
+  padding:4px 9px;
+  font-size:.73rem;
+  font-weight:900;
+  white-space:nowrap;
+  flex-shrink:0;
+  min-width:72px;
+  text-align:center;
+}
+.pslot.found{border-color:var(--red);background:#fff5f5;color:var(--red)}
+.hidden{display:none!important}
+.modo-badge{
+  margin-right:auto;
+  align-self:center;
+  max-width:62%;
+  background:rgba(255,222,0,.14);
+  border:1px solid rgba(255,222,0,.45);
+  color:var(--yellow);
+  border-radius:10px;
+  padding:6px 10px;
+  font-size:.7rem;
+  font-weight:900;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+#reloj{
+  background:#0d1b46;
+  color:#fff;
+  padding:7px 12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:8px;
+  font-size:.78rem;
+  font-weight:900;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.reloj-resto{
+  background:rgba(255,255,255,.13);
+  border-radius:10px;
+  padding:3px 9px;
+  white-space:nowrap;
+}
+.reloj-resto.apurado{
+  background:var(--red);
+  color:#fff;
+}
+.coste{
+  margin-left:auto;
+  background:rgba(10,40,95,.12);
+  border-radius:8px;
+  padding:2px 7px;
+  font-size:.72rem;
+  font-weight:900;
+  white-space:nowrap;
+  flex-shrink:0;
+}
+.submenu-nota{
+  font-size:.75rem;
+  color:#64748b;
+  font-weight:700;
+  line-height:1.45;
+  margin:5px 2px 4px;
+}
+#modal{
+  position:fixed;
+  top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,.72);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+  z-index:100;
+}
+.mc{
+  background:#fff;
+  border-radius:18px;
+  padding:22px;
+  width:100%;
+  max-width:400px;
+  text-align:center;
+  border:4px solid var(--blue);
+  box-shadow:0 14px 40px rgba(0,0,0,.4);
+}
+.mt{
+  font-size:.95rem;
+  font-weight:bold;
+  margin-bottom:12px;
+  line-height:1.5;
+}
+.mt.ok{color:#38a169}
+.mt.ko{color:#e53e3e}
+.mx{font-size:.95rem;margin-bottom:14px;line-height:1.5;font-weight:700}

@@ -50,48 +50,36 @@ si la pregunta trae explicación, la muestra con una bombilla. Falta el texto.
 
 ## 🟡 Jugabilidad
 
-- [ ] **Los huecos "???" de la Pokédex no significan nada.** `updatePokedex()` rellena
-      hasta 6 huecos con los primeros Pokémon del pool que no se han visto, así que
-      parece que faltan 6 concretos por encontrar cuando en realidad son decorativos.
-      O se muestran tantos huecos como Pokémon queden de verdad en la ruta, o se quitan.
-
 - [ ] **Afinar el reloj después de jugarlo en familia.** Los números están calculados y
       medidos (ver abajo), pero lo que dirá si están bien es ver a los niños jugar. Todo
-      está en la constante `TIEMPO`: cambiar el coste de investigar o de viajar es tocar
-      un número.
+      está en la constante `TIEMPO` de `js/juego.js`: cambiar el coste de investigar o de
+      viajar es tocar un número.
+
+- [ ] **Comprobar en el iPhone que ya suena la música.** El arreglo está hecho y
+      razonado (ver abajo), pero **no se puede verificar desde el ordenador**: hace falta
+      abrirlo en el teléfono, darle al botón de música y ver si suena, con el interruptor
+      lateral en silencio y sin él. Si sigue sin sonar, el siguiente sospechoso es el
+      modo de bajo consumo, que en iOS también corta el audio de fondo.
 
 ---
 
 ## 🔵 Limpieza y calidad
 
-- [ ] **Los sprites de PokeAPI no tienen plan B.** Los `<img class="poke-img">` se cargan
-      de `raw.githubusercontent.com` sin `onerror`, al contrario que las imágenes de
-      escena. Sin red queda un hueco roto justo donde está el Pokémon, que es lo más
-      llamativo de la pantalla. Poner al menos un emoji de recambio.
-
-- [ ] **El `viewport` impide el zoom.** `maximum-scale=1.0, user-scalable=no` bloquea
-      ampliar con los dedos. Se suele poner para que el móvil no haga zoom al tocar un
-      campo de texto, pero aquí no hay ni un campo de texto: no aporta nada y estorba a
-      quien necesite agrandar la letra.
-
-- [ ] **Sin favicon.** La pestaña sale con el icono en blanco. Con una Poké Ball en SVG
-      se arregla.
-
 - [ ] **No es instalable como PasaporteLector.** No hay `manifest.json` ni service worker,
       así que no se puede "Añadir a pantalla de inicio" ni jugar sin conexión. Ahora que
       la música se sintetiza y las imágenes son locales, el juego **no necesita red para
-      nada salvo los sprites**, así que como PWA funcionaría entero sin cobertura. Se
-      puede copiar el enfoque de
+      nada salvo los sprites**, y esos ya tienen recambio dibujado, así que como PWA
+      funcionaría entero sin cobertura. Se puede copiar el enfoque de
       [pasaporte-lector](https://github.com/jmorecru/pasaporte-lector).
-
-- [ ] **Un solo archivo de más de 2000 líneas.** La mayor parte son los datos del
-      `CITY_POOL`. Editar o añadir preguntas obliga a navegar por un archivo enorme y hace
-      los diffs de git ilegibles. Separar los datos a un `data/ciudades.js` y un
-      `data/repaso.js` se va a notar en cuanto el banco de repaso empiece a llenarse.
 
 - [ ] **Revisar las preguntas de Cádiz y Huelva en familia.** Las 60 se escribieron de una
       vez y, aunque están comprobadas, conviene que las lea alguien que conozca las dos
       ciudades: el primo Andrés y los abuelos son justo los expertos.
+
+- [ ] **Llevar el arreglo del audio a PasaporteLector.** Tiene el mismo problema y por la
+      misma razón: `js/ambient.js` usa un `AudioContext` pelado. El arreglo es el mismo
+      que está aquí en `js/musica.js` y son unas veinte líneas. Está en otro repositorio,
+      así que se hará cuando se diga.
 
 ---
 
@@ -104,6 +92,62 @@ si la pregunta trae explicación, la muestra con una bombilla. Falta el texto.
 ---
 
 ## ✅ Ya arreglado y verificado
+
+### El archivo único, troceado
+
+Eran 2706 líneas en un solo `index.html`. Ahora los datos van aparte del código:
+
+| Archivo | Líneas |
+| --- | --- |
+| `data/ciudades.js` | 996 |
+| `js/juego.js` | 915 |
+| `styles.css` | 377 |
+| `js/musica.js` | 237 |
+| `data/repaso.js` | 57 |
+| `data/pistas.js` | 54 |
+| `data/pokemon.js` | 37 |
+| `index.html` | 56 |
+
+Se hizo **con un script**, no a mano, para que el contenido saliera byte a byte igual.
+Comprobado después: los 85 símbolos de nivel superior siguen estando —ninguno perdido,
+ninguno inventado—, el CSS es idéntico carácter a carácter, y las 54 comprobaciones del
+banco de pruebas pasan.
+
+Se cargan como **scripts clásicos**, no como módulos ES, a propósito: el navegador acepta
+`<script src>` relativo desde `file://` pero **no** acepta módulos ni `fetch`. Así se
+sigue pudiendo abrir el juego con doble clic, que es como se juega en casa. Verificado
+lanzando el banco de pruebas por `file://`, no por servidor.
+
+### El audio en iPhone
+
+No sonaba en el iPhone, y tampoco en PasaporteLector. Los dos usaban un `AudioContext`
+pelado, sin ningún elemento `<audio>`, que es justo la configuración que **el interruptor
+lateral del teléfono silencia**: iOS manda ese sonido por la vía del timbre en vez de por
+la de la música.
+
+El arreglo: al encender la música se pone a sonar en bucle un WAV mudo de 444 bytes en un
+`<audio playsinline>`. Con un elemento de audio de verdad reproduciéndose, iOS cambia a la
+vía de la música y la Web Audio se oye igual que un vídeo, con el interruptor en silencio o
+sin él. Se para al apagar la música para no dejar la sesión abierta.
+
+Dos arreglos más de iOS por el camino: el contexto se comprueba contra `"running"` en vez
+de solo `"suspended"`, porque iOS tiene un estado propio `"interrupted"` en el que cae al
+bloquear el teléfono; y al volver a la pestaña se reanuda, que si no la música moría en
+silencio.
+
+**Esto no se ha podido verificar**: hace falta un iPhone. Queda arriba como pendiente de
+comprobar.
+
+### Cuatro detalles de acabado
+
+- **Favicon**: una Poké Ball en SVG con la bandera, incrustada en el HTML, sin fichero.
+- **El zoom ya funciona**: fuera `maximum-scale` y `user-scalable`. Bloquearlo se hace para
+  que el móvil no amplíe al tocar un campo de texto, y aquí no hay ni uno.
+- **Los sprites tienen plan B**: si PokeAPI no responde, sale una Poké Ball dibujada en vez
+  de un hueco roto justo donde va el Pokémon.
+- **La Pokédex ya no miente**: rellenaba los huecos con Pokémon del catálogo que no se
+  hubieran visto, así que siempre salían seis y parecía que faltaban seis concretos. Ahora
+  hay tantos huecos como queden de verdad en la ruta: 13 al empezar, uno menos por captura.
 
 ### El modelo Carmen Sandiego
 

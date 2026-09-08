@@ -68,8 +68,22 @@ la pantalla de victoria si la ruta pasó por allí.
 
 ## Cómo funciona por dentro
 
-- **Todo en el navegador**: HTML, CSS y JavaScript en un solo archivo, sin dependencias
-  ni build. No hay servidor ni base de datos; la partida vive en memoria.
+- **Todo en el navegador**: HTML, CSS y JavaScript sin dependencias ni build. No hay
+  servidor ni base de datos; la partida vive en memoria y se pierde al recargar, a
+  propósito.
+- **Los datos van aparte del código**, para que añadir contenido no obligue a bucear en
+  un archivo enorme:
+
+  | Archivo | Qué hay dentro |
+  | --- | --- |
+  | `data/ciudades.js` | Las 13 ciudades, sus 78 monumentos y las 390 preguntas |
+  | `data/pistas.js` | Las pistas de cada ciudad |
+  | `data/repaso.js` | El temario del colegio, por curso y tema |
+  | `data/pokemon.js` | Los legendarios y el catálogo de Pokémon |
+  | `js/musica.js` | La afinación, las tres melodías y el sintetizador |
+  | `js/juego.js` | El reloj, la ruta, las pantallas y el reparto de preguntas |
+  | `styles.css` | Todo el aspecto |
+  | `index.html` | 56 líneas: la estructura y poco más |
 - **Imágenes**: 91 fotografías de Wikimedia Commons, todas con licencia libre, servidas
   desde el propio repositorio. La atribución está en [CREDITOS.md](CREDITOS.md).
 - **Música**: sin ficheros de audio. Tres melodías originales de estilo 8 bits
@@ -81,8 +95,9 @@ la pantalla de victoria si la ruta pasó por allí.
 
 ## Ponerlo en marcha
 
-No hace falta servidor ni instalar nada: basta abrir `index.html` con doble clic. Si
-prefieres servirlo en local:
+No hace falta servidor ni instalar nada: basta abrir `index.html` con doble clic. Los
+archivos de `data/` y `js/` se cargan como scripts normales, que el navegador sí acepta
+desde `file://` — comprobado. Si prefieres servirlo en local:
 
 ```bash
 python -m http.server 8000

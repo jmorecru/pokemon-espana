@@ -20,7 +20,20 @@ Al entrar se elige a qué se juega:
   tema, y toda la partida sale de ahí. El monumento pasa a ser solo el escenario.
 
 Los temas se cargan en la constante `BANCO_REPASO` de `data/repaso.js`, que lleva encima un
-comentario con el formato y un ejemplo. Mientras no haya ninguno, el modo repaso lo avisa.
+comentario con el formato y un ejemplo. El primero ya está dentro: **Alemán, la casa y los
+muebles** (5º de Primaria), con 89 preguntas.
+
+Las preguntas pueden ser de dos clases:
+
+- **De test**, con tres opciones que el juego baraja.
+- **De escribir**, en las que hay que teclear la respuesta. Para un idioma cambian mucho
+  la cosa: reconocer una palabra entre tres es fácil, saber escribirla no. Se usan también
+  para completar frases, como en los ejercicios del libro.
+
+En las de escribir se acepta lo que un teclado español puede teclear: vale *Kueche* o
+*Kuche* por *Küche*, y *gross* por *groß*, porque la ß no está en el teclado y la diéresis
+cuesta. Da igual mayúsculas y espacios de más. Lo que no se perdona es equivocarse de
+palabra o de artículo, y al acertar el juego siempre recuerda cómo se escribe bien.
 
 ## Contra el reloj
 
@@ -120,7 +133,7 @@ Sigue necesitando conexión para cargar: no hay service worker todavía.
 
 ## Saber si estás viendo la última versión
 
-Debajo del título salen la versión y su fecha, con el formato `v8.3 · 2026-09-08`. Si no
+Debajo del título salen la versión y su fecha, con el formato `v8.4 · 2026-09-17`. Si no
 coincide con lo último que se publicó, el móvil está tirando de caché — pasa sobre todo
 con el atajo de la pantalla de inicio en iOS, que se queda con los archivos pegados.
 

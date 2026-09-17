@@ -544,9 +544,23 @@ function openPlace(i) {
   html += '<div class="stext">¡En el monumento <strong>' + pl.name + '</strong> divisáis movimiento!<br>¡Ha aparecido un <strong>' + pokeName + '</strong> salvaje! Demostrad vuestra sabiduría:</div>';
   html += '<div class="stext" style="background:#e6f0ff;border-color:var(--yellow)">❓ ' + pl.q + '</div>';
   html += '<div class="opts">';
-  pl.opts.forEach(function(opt, idx){
-    html += '<button data-answer="' + idx + '">' + opt + '</button>';
-  });
+  if (pl.tipo === "escribir") {
+    // La letra de 16 px no es capricho: por debajo de eso, iOS amplia la
+    // pagina de golpe al tocar el campo y se descoloca todo.
+    // El lang marca en que idioma se espera la respuesta. No cambia el teclado
+    // —eso no se puede hacer desde una pagina, lo elige el movil en sus
+    // ajustes— pero si es lo correcto y ayuda al corrector del sistema.
+    html += '<input id="respuestaEscrita" class="escribir" type="text" ' +
+            (pl.idioma ? 'lang="' + pl.idioma + '" ' : '') +
+            'autocomplete="off" autocorrect="off" autocapitalize="off" ' +
+            'spellcheck="false" placeholder="Escribe aquí tu respuesta">';
+    if (pl.pista) html += '<div class="escribir-pista">' + pl.pista + '</div>';
+    html += '<button class="abtn" id="comprobarBtn" style="justify-content:center">✅ Comprobar</button>';
+  } else {
+    pl.opts.forEach(function(opt, idx){
+      html += '<button data-answer="' + idx + '">' + opt + '</button>';
+    });
+  }
   html += '<button class="tbtn" id="backBtn" style="margin-top:5px">⬅️ Volver</button>';
   html += '</div>';
 
@@ -558,16 +572,47 @@ function openPlace(i) {
     });
   });
 
+  const campo = document.getElementById("respuestaEscrita");
+  if (campo) {
+    document.getElementById("comprobarBtn").addEventListener("click", checkEscrito);
+    // Con el Intro se responde igual que con el boton: en el movil es la tecla
+    // que sale en el teclado y es lo que todo el mundo va a pulsar.
+    campo.addEventListener("keydown", function(e){
+      if (e.key === "Enter") { e.preventDefault(); checkEscrito(); }
+    });
+    campo.focus();
+  }
+
   document.getElementById("backBtn").addEventListener("click", renderScreen);
 }
 
 function checkAns(idx) {
+  // Las de escribir se resuelven por checkEscrito. Sin esta guarda,
+  // checkAns(undefined) compararia undefined con el ans inexistente y daria
+  // la respuesta por buena sin haber tecleado nada.
+  if (!activePlace || activePlace.tipo === "escribir") return;
+  resolverRespuesta(idx === activePlace.ans);
+}
+
+// Comprueba lo que se ha escrito en las preguntas de teclear.
+function checkEscrito() {
+  const campo = document.getElementById("respuestaEscrita");
+  if (!campo) return;
+  const escrito = campo.value;
+  if (!escrito.trim()) {
+    campo.focus();
+    return;
+  }
+  resolverRespuesta(respuestaEscritaCorrecta(escrito, activePlace.resp), escrito);
+}
+
+function resolverRespuesta(acertada, escrito) {
   const mo = document.getElementById("modal");
   const mt = document.getElementById("mt");
   const mx = document.getElementById("mx");
   const finalBattle = isFinalRouteCity(state.currentCity);
 
-  if (idx === activePlace.ans) {
+  if (acertada) {
     mt.textContent = "¡CORRECTO! 🎉";
     mt.className = "mt ok";
 
@@ -580,8 +625,15 @@ function checkAns(idx) {
     if (state.discovered.indexOf(pokeName) === -1) state.discovered.push(pokeName);
     updatePokedex();
 
+    // Aunque se haya aceptado sin dieresis, se ensena como se escribe bien.
+    let bienEscrito = "";
+    if (activePlace.tipo === "escribir" && escrito &&
+        escrito.trim() !== activePlace.resp) {
+      bienEscrito = "✍️ Se escribe <strong>" + activePlace.resp + "</strong>.<br><br>";
+    }
+
     if (finalBattle) {
-      mx.innerHTML = "🌟 ¡El imponente <strong>" + state.legendario.name + "</strong> desciende ante vosotros!<br><br>Asombrado por vuestra impecable cultura y conocimiento geográfico por toda España, ¡decide unirse voluntariamente a vuestro equipo!";
+      mx.innerHTML = bienEscrito + "🌟 ¡El imponente <strong>" + state.legendario.name + "</strong> desciende ante vosotros!<br><br>Asombrado por vuestra impecable cultura y conocimiento geográfico por toda España, ¡decide unirse voluntariamente a vuestro equipo!";
       state.gameState = "win";
     } else {
       // Se guarda el texto pelado: el rotulo "Pista" lo pone quien la muestra.
@@ -590,7 +642,7 @@ function checkAns(idx) {
       const pista = getHintForCurrentCity();
       if (!state.pistasCiudad[state.currentCity]) state.pistasCiudad[state.currentCity] = [];
       state.pistasCiudad[state.currentCity].push(pista);
-      mx.innerHTML = "📡 <strong>Pista:</strong> " + pista;
+      mx.innerHTML = bienEscrito + "📡 <strong>Pista:</strong> " + pista;
     }
   } else {
     mt.textContent = "¡FALLO! ❌";
@@ -599,7 +651,10 @@ function checkAns(idx) {
     // pregunta trae explicacion, tambien el por que. El castigo no es una multa
     // aparte: es que el monumento se queda sin resolver y volver a entrar
     // cuesta otra investigacion entera.
-    let fallo = "Esa no era. La respuesta correcta es <strong>" + activePlace.opts[activePlace.ans] + "</strong>.";
+    const buena = (activePlace.tipo === "escribir")
+      ? activePlace.resp
+      : activePlace.opts[activePlace.ans];
+    let fallo = "Esa no era. La respuesta correcta es <strong>" + buena + "</strong>.";
     if (activePlace.exp) fallo += "<br><br>💡 " + activePlace.exp;
     fallo += "<br><br>El Pokémon se ha escapado sin soltar la pista. Podéis volver a investigar este monumento, pero os costará otras <strong>" + TIEMPO.investigar + " horas</strong>.";
     mx.innerHTML = fallo;
@@ -686,15 +741,58 @@ function showWin() {
 // correcta en la posicion 0, asi que hay que barajar las opciones aqui: si no,
 // se gana la partida entera pulsando siempre el primer boton.
 function prepararPregunta(pregunta, nombreLugar) {
+  // Hay dos clases de pregunta: la de siempre, con tres botones, y la de
+  // escribir, en la que hay que teclear la respuesta. La segunda se usa sobre
+  // todo en los temas de idiomas, donde reconocer la palabra en una lista es
+  // mucho mas facil que saber escribirla.
+  if (pregunta.tipo === "escribir") {
+    return {
+      name: nombreLugar,
+      tipo: "escribir",
+      q: pregunta.q,
+      resp: pregunta.resp,
+      pista: pregunta.pista || "",
+      idioma: pregunta.idioma || "",
+      exp: pregunta.exp || ""
+    };
+  }
+
   const correctText = pregunta.opts[pregunta.ans];
   const mixedOpts = shuffle(pregunta.opts);
   return {
     name: nombreLugar,
+    tipo: "test",
     q: pregunta.q,
     opts: mixedOpts,
     ans: mixedOpts.indexOf(correctText),
     exp: pregunta.exp || ""
   };
+}
+
+// Compara lo tecleado con la respuesta buena siendo razonable con el teclado.
+//
+// En un teclado espanol la ß no existe y la dieresis cuesta, asi que se acepta
+// escribir Kueche o Kuche por Küche, y gross por groß, que es justo como se
+// transcribe el aleman cuando no hay esas teclas. Tambien da igual mayusculas,
+// tildes sueltas, espacios de mas y el punto final. Lo que no se perdona es la
+// palabra: si escribe otra cosa, es fallo.
+//
+// Aun aceptandolo, la correccion siempre ensena la grafia buena, que es lo que
+// tiene que acabar aprendiendo.
+function normalizaEscrito(texto) {
+  return (texto || "")
+    .toLowerCase()
+    .replace(/ß/g, "ss")
+    .replace(/ü/g, "u").replace(/ue/g, "u")
+    .replace(/ö/g, "o").replace(/oe/g, "o")
+    .replace(/ä/g, "a").replace(/ae/g, "a")
+    .replace(/[.,;:!?¡¿]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function respuestaEscritaCorrecta(escrito, buena) {
+  return normalizaEscrito(escrito) === normalizaEscrito(buena);
 }
 
 // En modo repaso las preguntas salen del tema elegido, no del monumento. Se

@@ -1,6 +1,6 @@
 # Temas pendientes
 
-Última revisión: **8 de septiembre de 2026**. Versión publicada: **8.3**.
+Última revisión: **17 de septiembre de 2026**. Versión publicada: **8.4**.
 
 > **Al desplegar, subir la versión.** Hay que tocar dos sitios y es adrede: `VERSION` y
 > `VERSION_FECHA` en [js/version.js](js/version.js), que es lo que se ve en pantalla, y el
@@ -10,9 +10,23 @@
 
 ---
 
-## 🎯 Lo siguiente: el temario
+## 🎯 Lo siguiente: seguir cargando el temario
 
-La mecánica del modo repaso está hecha y probada. **Lo único que falta es el contenido.**
+La mecánica está hecha y **ya hay un tema dentro**: Alemán, la casa y los muebles (5º), con
+89 preguntas salidas de tres páginas de apuntes. El usuario irá pasando el resto conforme
+avance el curso, en fotos del libro o de la libreta.
+
+**La regla al escribir un tema de idiomas**, que costó aprender en el primero: no se puede
+usar ni una palabra que no venga en los apuntes, **ni siquiera como opción equivocada**. Si
+se cuela vocabulario sin estudiar, el juego deja de ser repaso. El usuario matizó después
+que las palabras básicas —infinitivos, artículos, preposiciones— sí valen; lo que no se
+puede es ampliar el vocabulario del tema, que aquí eran casa y muebles.
+
+Con casi cien preguntas eso no se garantiza a ojo, así que hay un comprobador
+(`vocabulario.py` en el scratchpad) que lleva transcritas las tres páginas y avisa de
+cualquier sustantivo alemán que no esté en ellas. Conviene rehacerlo con cada tema nuevo:
+en alemán los sustantivos van siempre en mayúscula, y eso permite distinguirlos del español
+de forma fiable.
 
 - [ ] **Cargar los temas conforme avance el curso.** Van en la constante `BANCO_REPASO`
       de `data/repaso.js`, dentro de `"1"`, `"3"` o `"5"`. Justo encima hay un comentario con
@@ -133,6 +147,26 @@ Se cargan como **scripts clásicos**, no como módulos ES, a propósito: el nave
 `<script src>` relativo desde `file://` pero **no** acepta módulos ni `fetch`. Así se
 sigue pudiendo abrir el juego con doble clic, que es como se juega en casa. Verificado
 lanzando el banco de pruebas por `file://`, no por servidor.
+
+### Preguntas de escribir y de completar frases
+
+Hasta ahora todo era tipo test. Para un idioma eso se queda corto: reconocer una palabra
+entre tres es fácil, saber escribirla no. Hay un segundo tipo de pregunta, `tipo:"escribir"`,
+con un campo de texto en vez de los tres botones. Sirve igual para completar frases, que es
+justo el ejercicio 2b del libro de alemán.
+
+**La corrección es indulgente con el teclado y estricta con la palabra.** En un teclado
+español la ß no existe y la diéresis cuesta, así que se acepta *Kueche* o *Kuche* por
+*Küche* y *gross* por *groß*, y da igual mayúsculas, tildes sueltas y espacios de más. Lo
+que no se perdona es otra palabra u otro artículo. Al acertar, si lo escrito no coincidía
+exactamente, el juego enseña la grafía buena.
+
+No se puede cambiar el teclado del móvil desde la página: eso lo decide el sistema. El
+campo lleva `lang` para que el corrector sepa en qué idioma va, y la letra es de 16 px
+justos porque por debajo de eso iOS amplía la página al tocar el campo.
+
+Hay una guarda en `checkAns` para que no pueda resolver una pregunta de escribir: sin ella,
+`checkAns(undefined)` comparaba `undefined` con el `ans` inexistente y la daba por buena.
 
 ### El mapa
 

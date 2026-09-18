@@ -317,7 +317,48 @@ const BANCO_REPASO = {
         exp:"Groß, grande. Se escribe con ß, que en español no existe." },
       { tipo:"escribir", idioma:"de", q:"Completa lo que dice Daniel: <strong>Mein Zimmer ist ziemlich ...</strong>",
         resp:"dunkel", pista:"Una palabra, lo contrario de hell.",
-        exp:"Dunkel, oscuro. Por eso pide una Leselampe." }
+        exp:"Dunkel, oscuro. Por eso pide una Leselampe." },
+
+      // --- Ortografía: donde se cae todo el mundo --------------------------
+      // Dos salen de errores vistos en el cuaderno (Whonzimmer, y la b/d de
+      // Badezimmer). El resto son las trampas clasicas para un hispanohablante
+      // con este vocabulario: el grupo sch, que en espanol no existe; las
+      // consonantes dobles, que aqui casi no se usan; la h que no se oye pero
+      // se escribe; y el Balkon con k.
+      //
+      // Ojo: la dieresis y la ss alemana NO se pueden examinar asi, porque la
+      // correccion las acepta a proposito para no castigar al teclado espanol.
+      { tipo:"escribir", idioma:"de", q:"Escribe en alemán <strong>el salón</strong>, con su artículo.",
+        resp:"das Wohnzimmer", pista:"Fíjate bien en el orden de las letras del principio.",
+        exp:"Das Wohnzimmer. Viene de wohnen, vivir: va wohn-, con la o antes que la h." },
+      { tipo:"escribir", idioma:"de", q:"Escribe en alemán <strong>el cuarto de baño</strong>, con la palabra larga y su artículo.",
+        resp:"das Badezimmer", pista:"La letra del medio: ¿b o d?",
+        exp:"Das Badezimmer, con d, porque sale de das Bad." },
+      { tipo:"escribir", idioma:"de", q:"Escribe en alemán <strong>el comedor</strong>, con su artículo.",
+        resp:"das Esszimmer", pista:"Una letra va doble.",
+        exp:"Das Esszimmer, con doble s. En alemán las consonantes dobles son de lo más normal; en español casi no las usamos." },
+      { tipo:"escribir", idioma:"de", q:"Escribe en alemán <strong>la habitación</strong>, con su artículo.",
+        resp:"das Zimmer", pista:"Una letra va doble.",
+        exp:"Das Zimmer, con doble m. Todos los cuartos de la casa acaban igual: -zimmer." },
+      { tipo:"escribir", idioma:"de", q:"Escribe en alemán <strong>el dormitorio</strong>, con su artículo.",
+        resp:"das Schlafzimmer", pista:"Empieza con un grupo de tres letras que en español no existe.",
+        exp:"Das Schlafzimmer. Empieza por sch-, y detrás va la l: schlaf-, de schlafen, dormir." },
+      { tipo:"escribir", idioma:"de", q:"Escribe en alemán <strong>la silla</strong>, con su artículo.",
+        resp:"der Stuhl", pista:"Lleva una letra que no se pronuncia.",
+        exp:"Der Stuhl. Esa h no se oye, pero se escribe: sirve para alargar la u." },
+      { tipo:"escribir", idioma:"de", q:"Escribe en alemán <strong>la alfombra</strong>, con su artículo.",
+        resp:"der Teppich", pista:"Una letra va doble, y el final no se escribe como suena.",
+        exp:"Der Teppich, con doble p y acabado en -ch." },
+      { tipo:"escribir", idioma:"de", q:"Escribe en alemán <strong>el escritorio</strong>, con su artículo.",
+        resp:"der Schreibtisch", pista:"Empieza y acaba con el mismo grupo de tres letras.",
+        exp:"Der Schreibtisch: sch al principio y sch al final. Lleva dentro der Tisch, la mesa." },
+      { tipo:"escribir", idioma:"de", q:"Escribe en alemán <strong>el balcón</strong>, con su artículo.",
+        resp:"der Balkon", pista:"Se parece mucho al español, pero una letra cambia.",
+        exp:"Der Balkon, con k. En español lo escribimos con c: balcón." },
+      { tipo:"escribir", idioma:"de", q:"Escribe en alemán <strong>el cuadro</strong>, con su artículo.",
+        resp:"das Bild", pista:"Acaba en una letra que casi no se oye.",
+        exp:"Das Bild. Al final suena casi como una t, pero se escribe con d." }
+
 
     ]
   }

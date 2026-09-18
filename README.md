@@ -21,7 +21,7 @@ Al entrar se elige a qué se juega:
 
 Los temas se cargan en la constante `BANCO_REPASO` de `data/repaso.js`, que lleva encima un
 comentario con el formato y un ejemplo. El primero ya está dentro: **Alemán, la casa y los
-muebles** (5º de Primaria), con 83 preguntas.
+muebles** (5º de Primaria), con 93 preguntas.
 
 Las preguntas pueden ser de dos clases:
 
@@ -133,7 +133,7 @@ Sigue necesitando conexión para cargar: no hay service worker todavía.
 
 ## Saber si estás viendo la última versión
 
-Debajo del título salen la versión y su fecha, con el formato `v8.5 · 2026-09-18`. Si no
+Debajo del título salen la versión y su fecha, con el formato `v8.6 · 2026-09-18`. Si no
 coincide con lo último que se publicó, el móvil está tirando de caché — pasa sobre todo
 con el atajo de la pantalla de inicio en iOS, que se queda con los archivos pegados.
 

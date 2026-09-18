@@ -1,6 +1,6 @@
 # Temas pendientes
 
-Última revisión: **18 de septiembre de 2026**. Versión publicada: **8.5**.
+Última revisión: **18 de septiembre de 2026**. Versión publicada: **8.6**.
 
 > **Al desplegar, subir la versión.** Hay que tocar dos sitios y es adrede: `VERSION` y
 > `VERSION_FECHA` en [js/version.js](js/version.js), que es lo que se ve en pantalla, y el
@@ -13,7 +13,7 @@
 ## 🎯 Lo siguiente: seguir cargando el temario
 
 La mecánica está hecha y **ya hay un tema dentro**: Alemán, la casa y los muebles (5º), con
-83 preguntas salidas de tres páginas del libro y una del cuaderno. El usuario irá pasando el resto conforme
+93 preguntas salidas de tres páginas del libro y una del cuaderno. El usuario irá pasando el resto conforme
 avance el curso, en fotos del libro o de la libreta.
 
 **Segunda regla, aprendida al revisar:** las preguntas tienen que ser **del idioma, no de
@@ -22,6 +22,17 @@ la página**. En la primera tanda se colaron diez sobre los textos de Ben, Danie
 alemán: son acordarse de tres párrafos de un libro que además no se tiene delante mientras
 se juega. Se quitaron. Si un texto merece la pena, la forma correcta es preguntar por la
 frase alemana, no por lo que le pasa al personaje.
+
+**Preguntas de ortografía, y lo que no se puede examinar.** Hay diez de escribir que
+apuntan a faltas concretas: dos vistas en el cuaderno (*Whonzimmer* con la h y la o
+cambiadas, y la b/d de *Badezimmer*) y ocho de las trampas clásicas para un hispanohablante
+con este vocabulario — el grupo *sch*, la *e* que el español mete delante de *s*+consonante,
+las consonantes dobles, la *h* muda de *Stuhl* y el *Balkon* con k. Comprobado una por una
+que la corrección las rechaza.
+
+**La diéresis y la ß no se pueden examinar por escrito**, porque la corrección las acepta a
+propósito para no castigar al teclado español. Se refuerzan solas con el aviso de *se
+escribe...* que sale al acertar.
 
 **La regla al escribir un tema de idiomas**, que costó aprender en el primero: no se puede
 usar ni una palabra que no venga en los apuntes, **ni siquiera como opción equivocada**. Si

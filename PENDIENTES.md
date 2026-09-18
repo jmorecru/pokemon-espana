@@ -1,6 +1,6 @@
 # Temas pendientes
 
-Última revisión: **17 de septiembre de 2026**. Versión publicada: **8.4**.
+Última revisión: **18 de septiembre de 2026**. Versión publicada: **8.5**.
 
 > **Al desplegar, subir la versión.** Hay que tocar dos sitios y es adrede: `VERSION` y
 > `VERSION_FECHA` en [js/version.js](js/version.js), que es lo que se ve en pantalla, y el
@@ -13,8 +13,15 @@
 ## 🎯 Lo siguiente: seguir cargando el temario
 
 La mecánica está hecha y **ya hay un tema dentro**: Alemán, la casa y los muebles (5º), con
-89 preguntas salidas de tres páginas de apuntes. El usuario irá pasando el resto conforme
+83 preguntas salidas de tres páginas del libro y una del cuaderno. El usuario irá pasando el resto conforme
 avance el curso, en fotos del libro o de la libreta.
+
+**Segunda regla, aprendida al revisar:** las preguntas tienen que ser **del idioma, no de
+la página**. En la primera tanda se colaron diez sobre los textos de Ben, Daniel y Anna
+—quién tiene una alfombra de colores, dónde cuelga Daniel sus dibujos— que no repasan
+alemán: son acordarse de tres párrafos de un libro que además no se tiene delante mientras
+se juega. Se quitaron. Si un texto merece la pena, la forma correcta es preguntar por la
+frase alemana, no por lo que le pasa al personaje.
 
 **La regla al escribir un tema de idiomas**, que costó aprender en el primero: no se puede
 usar ni una palabra que no venga en los apuntes, **ni siquiera como opción equivocada**. Si

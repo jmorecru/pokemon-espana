@@ -20,8 +20,13 @@ Al entrar se elige a qué se juega:
   tema, y toda la partida sale de ahí. El monumento pasa a ser solo el escenario.
 
 Los temas se cargan en la constante `BANCO_REPASO` de `data/repaso.js`, que lleva encima un
-comentario con el formato y un ejemplo. El primero ya está dentro: **Alemán, la casa y los
-muebles** (5º de Primaria), con 93 preguntas.
+comentario con el formato y un ejemplo. Van tres, todos de 5º de Primaria:
+
+| Tema | Preguntas | Idioma |
+| --- | --- | --- |
+| Alemán: la casa y los muebles | 93 (26 de escribir) | Preguntas en español |
+| Alemán: los posesivos | 50 (11 de escribir) | Preguntas en español |
+| Science: Energy | 71, todas de test | **En inglés**: la asignatura se da en inglés |
 
 Las preguntas pueden ser de dos clases:
 
@@ -133,7 +138,7 @@ Sigue necesitando conexión para cargar: no hay service worker todavía.
 
 ## Saber si estás viendo la última versión
 
-Debajo del título salen la versión y su fecha, con el formato `v8.6 · 2026-09-18`. Si no
+Debajo del título salen la versión y su fecha, con el formato `v8.7 · 2026-10-13`. Si no
 coincide con lo último que se publicó, el móvil está tirando de caché — pasa sobre todo
 con el atajo de la pantalla de inicio en iOS, que se queda con los archivos pegados.
 
@@ -142,6 +147,19 @@ atajo y volver a añadirlo.
 
 El número vive en un solo sitio, [js/version.js](js/version.js), y de ahí sale tanto el
 sello de la cabecera como el de la pantalla de inicio.
+
+## Pruebas
+
+En [pruebas/](pruebas) hay dos comprobaciones que conviene pasar cada vez que se carga un
+tema nuevo:
+
+```powershell
+python pruebas/vocabulario.py                # que ningún tema se salga de los apuntes
+powershell -File pruebas\correr.ps1          # juega partidas enteras en Edge sin ventana
+```
+
+La primera lleva transcritos los apuntes de cada tema. La segunda abre el juego por
+`file://`, así que comprueba de paso que el doble clic sigue funcionando.
 
 ## Ponerlo en marcha
 

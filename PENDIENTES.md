@@ -1,6 +1,6 @@
 # Temas pendientes
 
-Última revisión: **18 de septiembre de 2026**. Versión publicada: **8.6**.
+Última revisión: **13 de octubre de 2026**. Versión publicada: **8.7**.
 
 > **Al desplegar, subir la versión.** Hay que tocar dos sitios y es adrede: `VERSION` y
 > `VERSION_FECHA` en [js/version.js](js/version.js), que es lo que se ve en pantalla, y el
@@ -12,8 +12,23 @@
 
 ## 🎯 Lo siguiente: seguir cargando el temario
 
-La mecánica está hecha y **ya hay un tema dentro**: Alemán, la casa y los muebles (5º), con
-93 preguntas salidas de tres páginas del libro y una del cuaderno. El usuario irá pasando el resto conforme
+La mecánica está hecha y hay **tres temas** de 5º: Alemán, la casa y los muebles (93
+preguntas); Alemán, los posesivos (50); y Science: Energy (71).
+
+**Science va entera en inglés** —pregunta, opciones y explicación— porque la asignatura se
+da así. Y **toda de test**: el usuario pidió que se parezca a las fichas que hacen en clase,
+y escribir *gravitational* es más ortografía que ciencia. Hay preguntas con el formato de
+sus fichas de transformaciones (*chemical → light*).
+
+**Cuidado con las opciones malas en ciencias**: no pueden ser medio verdad. *Kinetic* y
+*mechanical* nunca compiten (la cinética es mecánica, y en clase dan por buena *kinetic*);
+con el Sol como fuente, *heat* no va de opción mala (sus apuntes dicen que el Sol da luz y
+calor, y en las fichas lo esperado es *light*); y nada de un despertador sin luz o un coche
+sin ruido.
+
+**Las comprobaciones viven en `pruebas/`** desde que el scratchpad se vació dos veces y se
+llevó el banco de pruebas. `pruebas/vocabulario.py` lleva transcritos los apuntes de cada
+tema: al cargar uno nuevo hay que añadir los suyos. El usuario irá pasando el resto conforme
 avance el curso, en fotos del libro o de la libreta.
 
 **Segunda regla, aprendida al revisar:** las preguntas tienen que ser **del idioma, no de
@@ -41,7 +56,7 @@ que las palabras básicas —infinitivos, artículos, preposiciones— sí valen
 puede es ampliar el vocabulario del tema, que aquí eran casa y muebles.
 
 Con casi cien preguntas eso no se garantiza a ojo, así que hay un comprobador
-(`vocabulario.py` en el scratchpad) que lleva transcritas las tres páginas y avisa de
+(`pruebas/vocabulario.py`) que lleva transcritos los apuntes y avisa de
 cualquier sustantivo alemán que no esté en ellas. Conviene rehacerlo con cada tema nuevo:
 en alemán los sustantivos van siempre en mayúscula, y eso permite distinguirlos del español
 de forma fiable.

@@ -553,7 +553,8 @@ function openPlace(i) {
     html += '<input id="respuestaEscrita" class="escribir" type="text" ' +
             (pl.idioma ? 'lang="' + pl.idioma + '" ' : '') +
             'autocomplete="off" autocorrect="off" autocapitalize="off" ' +
-            'spellcheck="false" placeholder="Escribe aquí tu respuesta">';
+            'spellcheck="false" placeholder="' +
+            (pl.idioma === "en" ? "Type your answer here" : "Escribe aquí tu respuesta") + '">';
     if (pl.pista) html += '<div class="escribir-pista">' + pl.pista + '</div>';
     html += '<button class="abtn" id="comprobarBtn" style="justify-content:center">✅ Comprobar</button>';
   } else {
@@ -603,7 +604,8 @@ function checkEscrito() {
     campo.focus();
     return;
   }
-  resolverRespuesta(respuestaEscritaCorrecta(escrito, activePlace.resp), escrito);
+  resolverRespuesta(respuestaEscritaCorrecta(escrito, activePlace.resp,
+                                            activePlace.acepta, activePlace.idioma), escrito);
 }
 
 function resolverRespuesta(acertada, escrito) {
@@ -626,10 +628,19 @@ function resolverRespuesta(acertada, escrito) {
     updatePokedex();
 
     // Aunque se haya aceptado sin dieresis, se ensena como se escribe bien.
+    // En aleman cuentan las mayusculas, porque los sustantivos las llevan; en
+    // ingles no, que seria avisar por nada.
     let bienEscrito = "";
-    if (activePlace.tipo === "escribir" && escrito &&
-        escrito.trim() !== activePlace.resp) {
-      bienEscrito = "✍️ Se escribe <strong>" + activePlace.resp + "</strong>.<br><br>";
+    if (activePlace.tipo === "escribir" && escrito) {
+      const tecleado = escrito.trim().replace(/\s+/g, " ");
+      const formas = [activePlace.resp].concat(activePlace.acepta || []);
+      const exacto = formas.some(function(f){
+        return activePlace.idioma === "de" ? f === tecleado
+                                           : f.toLowerCase() === tecleado.toLowerCase();
+      });
+      if (!exacto) {
+        bienEscrito = "✍️ Se escribe <strong>" + activePlace.resp + "</strong>.<br><br>";
+      }
     }
 
     if (finalBattle) {
@@ -751,6 +762,7 @@ function prepararPregunta(pregunta, nombreLugar) {
       tipo: "escribir",
       q: pregunta.q,
       resp: pregunta.resp,
+      acepta: pregunta.acepta || [],
       pista: pregunta.pista || "",
       idioma: pregunta.idioma || "",
       exp: pregunta.exp || ""
@@ -779,20 +791,31 @@ function prepararPregunta(pregunta, nombreLugar) {
 //
 // Aun aceptandolo, la correccion siempre ensena la grafia buena, que es lo que
 // tiene que acabar aprendiendo.
-function normalizaEscrito(texto) {
-  return (texto || "")
-    .toLowerCase()
-    .replace(/ß/g, "ss")
-    .replace(/ü/g, "u").replace(/ue/g, "u")
-    .replace(/ö/g, "o").replace(/oe/g, "o")
-    .replace(/ä/g, "a").replace(/ae/g, "a")
+//
+// Las transliteraciones son solo para el aleman. En ingles no pintan nada y
+// podrian confundir dos palabras distintas, asi que ahi solo se ignoran
+// mayusculas, espacios y puntuacion.
+function normalizaEscrito(texto, idioma) {
+  let t = (texto || "").toLowerCase();
+  if (idioma === "de") {
+    t = t.replace(/ß/g, "ss")
+         .replace(/ü/g, "u").replace(/ue/g, "u")
+         .replace(/ö/g, "o").replace(/oe/g, "o")
+         .replace(/ä/g, "a").replace(/ae/g, "a");
+  }
+  return t
     .replace(/[.,;:!?¡¿]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
 }
 
-function respuestaEscritaCorrecta(escrito, buena) {
-  return normalizaEscrito(escrito) === normalizaEscrito(buena);
+// Una pregunta puede aceptar varias respuestas: en ciencias, chemical y
+// chemical energy son lo mismo y no tiene sentido dar una por mala.
+function respuestaEscritaCorrecta(escrito, buena, alternativas, idioma) {
+  const e = normalizaEscrito(escrito, idioma);
+  return [buena].concat(alternativas || []).some(function(b){
+    return normalizaEscrito(b, idioma) === e;
+  });
 }
 
 // En modo repaso las preguntas salen del tema elegido, no del monumento. Se
